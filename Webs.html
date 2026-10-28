@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitleTag">SAKURA FIGURE | Thế Giới Mô Hình Anime Ngọt Ngào</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.firebaseModules = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, GoogleAuthProvider, signInWithPopup,
+            getFirestore, doc, getDoc, setDoc
+        };
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        sakura: {
+                            50: '#fff5f8', 100: '#ffe8f0', 200: '#ffd1e1', 300: '#ffaec9', 400: '#ff7da8', 500: '#ff528a', 600: '#e8336d', text: '#4a3540'
+                        }
+                    },
+                    animation: {
+                        'marquee': 'marquee 30s linear infinite',
+                        'float': 'float 5.5s ease-in-out infinite',
+                        'pulse-soft': 'pulse-soft 3.5s infinite',
+                        'spin-slow': 'spin 16s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: { '0%': { transform: 'translateX(0%)' }, '100%': { transform: 'translateX(-50%)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' }, '50%': { transform: 'translateY(-14px) rotate(1deg)' } },
+                        'pulse-soft': { '0%, 100%': { opacity: 0.45, transform: 'scale(1)' }, '50%': { opacity: 0.8, transform: 'scale(1.06)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #fff8fa; color: #4a3540; overflow-x: hidden; }
+        .bg-sakura-pattern { background-color: #fff8fa; background-image: radial-gradient(rgba(255, 125, 168, 0.16) 1.5px, transparent 1.5px), radial-gradient(rgba(192, 132, 252, 0.12) 1.5px, #fff8fa 1.5px); background-size: 36px 36px; background-position: 0 0, 18px 18px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff0f5; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ffaec9, #ff7da8); border-radius: 9999px; }
+        .tilt-card { transform-style: preserve-3d; transition: transform 0.2s ease-out, box-shadow 0.35s ease, border-color 0.35s ease; will-change: transform; position: relative; }
+        .tilt-card::before { content: ''; position: absolute; inset: 0; border-radius: 1.5rem; background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 125, 168, 0.16), transparent 45%); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 2; }
+        .tilt-card:hover::before { opacity: 1; }
+        .tilt-card:hover { box-shadow: 0 22px 45px -12px rgba(255, 82, 138, 0.22), 0 0 25px rgba(255, 174, 201, 0.35); border-color: rgba(255, 125, 168, 0.65); }
+        .tilt-content { transform: translateZ(20px); }
+        .text-glow-pink { text-shadow: 0 4px 18px rgba(255, 82, 138, 0.28); }
+        .sakura-petal { position: fixed; top: -10%; background: linear-gradient(135deg, #ffd1e1 0%, #ff9ebb 100%); border-radius: 150% 0 150% 0; pointer-events: none; z-index: 30; opacity: 0.7; box-shadow: 0 2px 6px rgba(255, 125, 168, 0.2); animation: sakuraFall linear infinite; }
+        @keyframes sakuraFall { 0% { transform: translateY(-5vh) translateX(0) rotate(0deg); opacity: 0; } 15% { opacity: 0.75; } 85% { opacity: 0.75; } 100% { transform: translateY(105vh) translateX(120px) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body class="bg-sakura-pattern selection:bg-sakura-300 selection:text-sakura-text antialiased">
+
+    <div id="sakuraContainer" class="fixed inset-0 pointer-events-none overflow-hidden z-30"></div>
+    <div class="fixed top-[-8%] left-[-8%] w-[420px] h-[420px] bg-sakura-200/50 rounded-full blur-[110px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-8%] right-[-8%] w-[420px] h-[420px] bg-purple-200/50 rounded-full blur-[110px] pointer-events-none z-0"></div>
+
+    <!-- Header / Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/85 backdrop-blur-xl border-b border-sakura-200/80 shadow-[0_4px_25px_rgba(255,125,168,0.08)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <a href="#hero" class="flex items-center gap-3 group shrink-0 select-none">
+                <div>
+                    <span id="siteLogoTitle" class="font-display font-bold text-xl tracking-wide text-sakura-text block leading-none">SAKURA</span>
+                    <span id="siteLogoSubtitle" class="text-[11px] font-display font-semibold tracking-[0.2em] text-sakura-500 block mt-0.5">ANIME FIGURE</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-bold text-slate-600">
+                <a href="#hero" class="hover:text-sakura-500 transition-colors">Trang Chủ</a>
+                <a href="#flash-sale" class="hover:text-sakura-500 transition-colors flex items-center gap-1.5 text-sakura-600">
+                    <i class="fa-solid fa-heart-pulse text-sakura-500 animate-bounce"></i> Ưu Đãi Ngọt Ngào
+                </a>
+                <a href="#catalog" class="hover:text-sakura-500 transition-colors">Tủ Kệ Mô Hình</a>
+            </nav>
+
+            <div class="flex items-center gap-2.5 sm:gap-3 flex-1 lg:flex-initial justify-end">
+                <div class="relative hidden sm:block w-full max-w-[210px] xl:max-w-[250px]">
+                    <input type="text" id="headerSearchInput" placeholder="Tìm Miku, Gojo..." class="w-full bg-sakura-50/90 border border-sakura-200 focus:border-sakura-400 rounded-full py-2 pl-9 pr-4 text-xs sm:text-sm text-sakura-text placeholder-rose-300 focus:outline-none">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-sakura-400 text-xs"></i>
+                </div>
+                <button onclick="toggleAuthModal(true)" class="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-sakura-50 hover:bg-sakura-100 border border-sakura-200 text-sakura-600 font-display font-bold text-xs">
+                    <i class="fa-solid fa-user"></i> <span id="headerAccountLabel" class="hidden sm:inline">Tài Khoản</span>
+                </button>
+                <button id="headerAdminBtn" onclick="toggleAdminModal(true)" class="hidden items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-purple-600 text-white font-display font-bold text-xs shadow-sm">
+                    <i class="fa-solid fa-sliders"></i> <span class="hidden sm:inline">Quản Trị</span>
+                </button>
+                <button onclick="toggleCart(true)" class="relative flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-sakura-400 to-sakura-500 text-white font-display font-bold text-xs sm:text-sm shadow-[0_6px_20px_rgba(255,82,138,0.3)]">
+                    <i class="fa-solid fa-basket-shopping"></i> <span class="hidden md:inline">Giỏ Hàng</span>
+                    <span id="cartCountBadge" class="px-2 py-0.5 rounded-full bg-white text-sakura-600 font-display font-bold text-xs shadow-sm">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden min-h-[88vh] flex items-center">
+        <div class="parallax-layer absolute top-28 left-[7%] w-20 h-20 bg-sakura-200/40 border border-sakura-300 rounded-3xl rotate-12 pointer-events-none hidden md:flex items-center justify-center text-sakura-400 text-2xl" data-speed="0.04"><i class="fa-solid fa-star"></i></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-sakura-100/90 border border-sakura-300 text-sakura-600 text-xs font-bold tracking-wide">
+                        <span class="w-2 h-2 rounded-full bg-sakura-500 animate-ping"></span>
+                        <span id="heroBadgeText">🌸 Bộ Sưu Tập Anime Mùa Hoa Anh Đào 2026</span>
+                    </div>
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl xl:text-6xl leading-[1.16] tracking-tight text-sakura-text">
+                        <span id="heroMainTitle">GÓC NHỎ NGỌT NGÀO</span> <br/>
+                        <span id="heroHighlightTitle" class="text-transparent bg-clip-text bg-gradient-to-r from-sakura-500 via-pink-400 to-purple-500 text-glow-pink">CHO TÍN ĐỒ ANIME</span>
+                    </h1>
+                    <p id="heroDescText" class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                        Chào mừng bạn đến với thiên đường Nendoroid, Scale Figure, Chibi & Waifu/Husbando chính hãng 100% từ Nhật Bản. Màu sắc trong trẻo, đường nét tinh tế mang nhân vật yêu thích về ngay bàn học của bạn!
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#catalog" class="px-7 py-4 rounded-full bg-gradient-to-r from-sakura-400 to-sakura-500 text-white font-display font-bold text-sm tracking-wide shadow-[0_10px_25px_rgba(255,82,138,0.35)] flex items-center gap-2.5">
+                            <span>Dạo Quanh Tủ Kệ</span> <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </a>
+                        <a href="#flash-sale" class="px-7 py-4 rounded-full bg-white border-2 border-sakura-300 text-sakura-600 font-display font-bold text-sm tracking-wide shadow-sm flex items-center gap-2.5">
+                            <i class="fa-solid fa-gift text-sakura-500"></i> <span>Săn Deal Giảm 35%</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 relative flex justify-center items-center">
+                    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-tr from-sakura-300/60 via-pink-200/60 to-purple-300/60 rounded-full blur-2xl animate-pulse-soft pointer-events-none"></div>
+                    <div class="parallax-layer relative z-10 w-full max-w-md" data-speed="-0.05">
+                        <div class="relative rounded-[2rem] bg-white/85 backdrop-blur-xl border-2 border-sakura-200 p-4 shadow-[0_25px_60px_rgba(255,125,168,0.22)] animate-float">
+                            <div class="relative rounded-[1.5rem] overflow-hidden aspect-[4/4.3] bg-gradient-to-b from-sakura-100 to-purple-100 cursor-pointer">
+                                <img id="heroBannerImg" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1000&q=85" alt="Sakura Miku" class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-sakura-900/50 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-sakura-200 flex items-center justify-between gap-3 shadow-lg">
+                                    <div>
+                                        <span id="heroBannerBrand" class="text-[11px] text-sakura-500 font-bold uppercase">Good Smile Company</span>
+                                        <h3 id="heroBannerProdName" class="font-display font-bold text-sakura-text text-sm">Sakura Miku - Hanami Fairy</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLASH SALE SECTION -->
+    <section id="flash-sale" class="py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="rounded-[2.2rem] bg-gradient-to-br from-sakura-100/90 via-white to-purple-100/80 border-2 border-sakura-200 p-6 sm:p-10 shadow-[0_20px_50px_rgba(255,125,168,0.15)] relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-sakura-200">
+                    <div>
+                        <div id="flashSubtitle" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sakura-500 text-white text-xs font-bold mb-3 shadow-sm"><i class="fa-solid fa-bolt"></i> Giờ Vàng Ngọt Ngào Hôm Nay</div>
+                        <h2 id="flashTitle" class="font-display font-bold text-2xl sm:text-4xl text-sakura-text">RƯỚC FIGURE XINH - GIÁ YÊU THƯƠNG</h2>
+                    </div>
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <span class="text-xs sm:text-sm text-slate-600 font-bold hidden sm:inline">Kết thúc sau:</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-14 h-14 rounded-2xl bg-white border-2 border-sakura-300 flex flex-col items-center justify-center shadow-sm"><span id="cd-hours" class="font-display font-bold text-lg text-sakura-600">04</span></div>
+                            <span class="font-display font-bold text-sakura-500 text-xl">:</span>
+                            <div class="w-14 h-14 rounded-2xl bg-white border-2 border-sakura-300 flex flex-col items-center justify-center shadow-sm"><span id="cd-minutes" class="font-display font-bold text-lg text-sakura-600">45</span></div>
+                            <span class="font-display font-bold text-sakura-500 text-xl">:</span>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-b from-sakura-400 to-sakura-500 flex flex-col items-center justify-center shadow-md"><span id="cd-seconds" class="font-display font-bold text-lg text-white">19</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="flashSaleContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATALOG SECTION -->
+    <section id="catalog" class="py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span id="catalogSectionTag" class="text-sakura-500 font-display text-xs uppercase tracking-[0.2em] font-bold">🌸 BỘ SƯU TẬP ĐA DẠNG</span>
+                    <h2 id="catalogSectionTitle" class="font-display font-bold text-3xl sm:text-4xl text-sakura-text mt-1">TỦ KỆ PHÂN LOẠI MÔ HÌNH</h2>
+                </div>
+            </div>
+
+            <!-- Categories Bar -->
+            <div class="bg-white/90 backdrop-blur-md border-2 border-sakura-200 rounded-3xl p-4 sm:p-5 mb-10 flex flex-col gap-4 shadow-sm">
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    <button onclick="setCategory('all')" data-cat="all" class="cat-btn active px-5 py-2.5 rounded-full font-display font-bold text-xs sm:text-sm whitespace-nowrap bg-gradient-to-r from-sakura-400 to-sakura-500 text-white shadow-sm">✨ Tất Cả (<span id="count-all">0</span>)</button>
+                    <button onclick="setCategory('Scale Figure')" data-cat="Scale Figure" class="cat-btn px-5 py-2.5 rounded-full font-display font-bold text-xs bg-sakura-50 text-sakura-text border border-sakura-200">🌸 Scale Figure</button>
+                    <button onclick="setCategory('Nendoroid Chibi')" data-cat="Nendoroid Chibi" class="cat-btn px-5 py-2.5 rounded-full font-display font-bold text-xs bg-sakura-50 text-sakura-text border border-sakura-200">🧸 Nendoroid & Chibi</button>
+                    <button onclick="setCategory('Gundam Mecha')" data-cat="Gundam Mecha" class="cat-btn px-5 py-2.5 rounded-full font-display font-bold text-xs bg-sakura-50 text-sakura-text border border-sakura-200">🤖 Gundam & Mecha</button>
+                </div>
+                <div class="flex justify-between items-center pt-2 border-t border-sakura-100 text-xs">
+                    <span class="text-slate-500">Danh mục: <strong id="currentCategoryLabel" class="text-sakura-600">Tất Cả Sản Phẩm</strong></span>
+                    <select id="sortSelect" onchange="renderProducts()" class="bg-sakura-50 border border-sakura-200 rounded-full py-1.5 px-3 text-xs font-semibold text-sakura-text focus:outline-none">
+                        <option value="featured">Mặc định</option>
+                        <option value="price-asc">Giá: Thấp đến Cao</option>
+                        <option value="price-desc">Giá: Cao đến Thấp</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-sakura-200 py-10 mt-16 text-center text-xs text-slate-500 space-y-2">
+        <p id="footerCopyrightText">© 2026 SAKURA FIGURE SHOP. Thiết kế ngọt ngào dành cho cộng đồng Anime Việt Nam.</p>
+        <span id="footerSubText" class="inline-block cursor-pointer text-sakura-400 font-bold">🌸 Sakura Collectibles</span>
+    </footer>
+
+    <!-- CART DRAWER -->
+    <div id="cartOverlay" onclick="toggleCart(false)" class="fixed inset-0 z-50 bg-sakura-text/30 backdrop-blur-sm hidden"></div>
+    <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-white border-l-2 border-sakura-200 shadow-xl hidden flex-col">
+        <div class="p-5 border-b border-sakura-100 flex items-center justify-between bg-sakura-50/60">
+            <h3 class="font-display font-bold text-sakura-text text-base">GIỎ HÀNG CỦA BẠN</h3>
+            <button onclick="toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-sakura-500 text-slate-500 hover:text-white border border-sakura-200 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-3 bg-sakura-100/50 text-[11px] text-sakura-600 font-bold border-b border-sakura-200 flex items-center justify-between">
+            <span>Trạng thái: <span id="cartUserStatus" class="underline">Chưa đăng nhập</span></span>
+        </div>
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+        <div class="p-5 border-t border-sakura-200 bg-sakura-50/40 space-y-3">
+            <div id="cartLoginNotice" class="text-center p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold">
+                Vui lòng <button onclick="toggleCart(false); toggleAuthModal(true);" class="underline text-sakura-600">Đăng Nhập</button> tài khoản để tiến hành đặt hàng!
+            </div>
+            <div id="cartCheckoutForm" class="hidden space-y-2.5">
+                <input id="custName" type="text" placeholder="Họ tên người nhận *" class="w-full bg-white border border-sakura-200 rounded-xl px-3 py-2 text-xs text-sakura-text">
+                <input id="custPhone" type="tel" placeholder="Số điện thoại *" class="w-full bg-white border border-sakura-200 rounded-xl px-3 py-2 text-xs text-sakura-text">
+                <input id="custAddress" type="text" placeholder="Địa chỉ giao hàng *" class="w-full bg-white border border-sakura-200 rounded-xl px-3 py-2 text-xs text-sakura-text">
+            </div>
+            <div class="flex justify-between items-center pt-1 font-display font-bold"><span class="text-sakura-text">Tổng tiền:</span><span id="cartTotalPrice" class="text-xl text-sakura-600">0 ₫</span></div>
+            <button onclick="checkoutOrder()" class="w-full py-3.5 rounded-full bg-gradient-to-r from-sakura-400 to-purple-500 text-white font-display font-bold text-sm uppercase shadow-md">Hoàn Tất Đặt Hàng</button>
+        </div>
+    </aside>
+
+    <!-- AUTHENTICATION MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-sakura-text/40 backdrop-blur-sm">
+        <div class="w-full max-w-sm rounded-[2rem] bg-white border-2 border-sakura-200 p-6 shadow-xl relative">
+            <button onclick="toggleAuthModal(false)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-sakura-50 hover:bg-sakura-500 text-slate-400 hover:text-white border border-sakura-200 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Login View -->
+            <div id="authViewLogin" class="space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-lock"></i></div>
+                    <h3 class="font-display font-bold text-base text-sakura-text">ĐĂNG NHẬP</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Dành cho khách hàng thành viên</p>
+                </div>
+                
+                <button onclick="loginWithGoogle()" class="w-full py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-display font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google"> Đăng nhập bằng Google
+                </button>
+                
+                <div class="flex items-center gap-2 text-slate-300 text-xs">
+                    <div class="flex-1 border-b border-slate-200"></div><span>hoặc tài khoản Shop</span><div class="flex-1 border-b border-slate-200"></div>
+                </div>
+
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                    <input id="loginUsername" type="text" required placeholder="Tên tài khoản, Email hoặc SĐT *" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <input id="loginPassword" type="password" required placeholder="Mật khẩu *" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <div class="text-right">
+                        <button type="button" onclick="switchAuthView('forgot')" class="text-sakura-500 font-bold underline">Quên mật khẩu?</button>
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-full bg-gradient-to-r from-sakura-400 to-sakura-500 text-white font-display font-bold uppercase shadow-sm">Đăng Nhập</button>
+                </form>
+                <div class="text-center pt-2 text-xs">
+                    <span class="text-slate-500">Chưa có tài khoản?</span> 
+                    <button onclick="switchAuthView('register')" class="text-sakura-600 font-bold underline ml-1">Đăng ký ngay</button>
+                </div>
+            </div>
+
+            <!-- Register View -->
+            <div id="authViewRegister" class="hidden space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
+                    <h3 class="font-display font-bold text-base text-sakura-text">ĐĂNG KÝ THÀNH VIÊN</h3>
+                </div>
+                <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 pt-2 text-xs">
+                    <input id="regUsername" type="text" required placeholder="Tên tài khoản (để đăng nhập) *" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <input id="regEmail" type="email" placeholder="Email (Không bắt buộc)" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <input id="regPhone" type="tel" placeholder="Số điện thoại (Không bắt buộc)" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <input id="regPassword" type="password" required placeholder="Mật khẩu *" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <button type="submit" class="w-full py-3 rounded-full bg-gradient-to-r from-purple-400 to-sakura-500 text-white font-display font-bold uppercase shadow-sm">Hoàn Tất Đăng Ký</button>
+                </form>
+                <div class="text-center pt-2 text-xs">
+                    <span class="text-slate-500">Đã có tài khoản?</span> 
+                    <button onclick="switchAuthView('login')" class="text-sakura-600 font-bold underline ml-1">Đăng nhập</button>
+                </div>
+            </div>
+
+            <!-- Forgot Password View -->
+            <div id="authViewForgot" class="hidden space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-xl"><i class="fa-solid fa-key"></i></div>
+                    <h3 class="font-display font-bold text-base text-sakura-text">QUÊN MẬT KHẨU</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Nhập SĐT hoặc Email để nhận mã OTP</p>
+                </div>
+                <div class="space-y-3 text-xs pt-2">
+                    <input id="forgotInfo" type="text" placeholder="Số điện thoại hoặc Email *" class="w-full border border-sakura-200 rounded-xl px-3 py-2.5">
+                    <button onclick="sendOTP()" class="w-full py-2.5 rounded-full bg-slate-800 text-white font-display font-bold shadow-sm">Nhận Mã Khôi Phục (OTP)</button>
+                    
+                    <div id="otpStepBox" class="hidden p-3 bg-sakura-50 border border-sakura-200 rounded-xl mt-3 space-y-3">
+                        <input id="forgotOTP" type="text" placeholder="Nhập mã OTP gồm 6 số *" class="w-full border border-sakura-300 rounded-lg px-3 py-2 text-center tracking-widest font-bold text-sakura-600">
+                        <input id="forgotNewPass" type="password" placeholder="Mật khẩu mới *" class="w-full border border-sakura-300 rounded-lg px-3 py-2">
+                        <button onclick="verifyOTPAndReset()" class="w-full py-2.5 rounded-lg bg-sakura-500 text-white font-display font-bold">Xác nhận & Đổi mật khẩu</button>
+                    </div>
+                </div>
+                <div class="text-center pt-2 text-xs">
+                    <button onclick="switchAuthView('login')" class="text-slate-500 font-bold underline"><i class="fa-solid fa-arrow-left"></i> Quay lại Đăng nhập</button>
+                </div>
+            </div>
+
+            <!-- Profile View -->
+            <div id="authViewProfile" class="hidden space-y-4 text-center">
+                <div class="w-14 h-14 mx-auto rounded-full bg-sakura-100 border-2 border-sakura-300 flex items-center justify-center text-sakura-600 text-2xl shadow-sm"><i class="fa-solid fa-user"></i></div>
+                <div>
+                    <h3 id="profileUsername" class="font-display font-bold text-lg text-sakura-text">Tên Tài Khoản</h3>
+                    <p id="profileRoleBadge" class="text-xs text-sakura-500 font-bold mt-0.5">Khách Hàng Thành Viên</p>
+                </div>
+                <div class="space-y-2 pt-2">
+                    <button id="profileOpenAdminBtn" onclick="toggleAuthModal(false); toggleAdminModal(true);" class="hidden w-full py-2.5 rounded-full bg-purple-600 text-white font-display font-bold text-xs shadow-sm">
+                        <i class="fa-solid fa-sliders mr-1.5"></i> Mở Bảng Quản Trị Shop
+                    </button>
+                    <button onclick="logoutAccount()" class="w-full py-2.5 rounded-full bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200 font-display font-bold text-xs transition-colors">
+                        Đăng Xuất Tài Khoản
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN CMS DASHBOARD MODAL -->
+    <div id="adminModal" class="fixed inset-0 z-[55] hidden items-center justify-center p-4 bg-sakura-text/60 backdrop-blur-md">
+        <div class="w-full max-w-6xl h-[90vh] rounded-[2rem] bg-white border-2 border-sakura-200 shadow-2xl flex flex-col overflow-hidden relative">
+            <div class="px-6 py-4 bg-sakura-50 border-b border-sakura-200 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center"><i class="fa-solid fa-sliders"></i></div>
+                    <h3 class="font-display font-bold text-base text-sakura-text hidden md:block">TRUNG TÂM QUẢN TRỊ SAKURA SHOP</h3>
+                </div>
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    <button onclick="switchAdminTab('products')" id="tabBtn-products" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-sakura-500 text-white whitespace-nowrap">Sản Phẩm (<span id="adminCountProds">0</span>)</button>
+                    <button onclick="switchAdminTab('users')" id="tabBtn-users" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Khách Hàng</button>
+                    <button onclick="switchAdminTab('settings')" id="tabBtn-settings" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Sửa Toàn Bộ Văn Bản & Banner</button>
+                    <button onclick="switchAdminTab('orders')" id="tabBtn-orders" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Đơn Hàng (<span id="adminCountOrders">0</span>)</button>
+                    <button onclick="toggleAdminModal(false)" class="px-4 py-1.5 rounded-full bg-slate-200 text-slate-700 font-bold text-xs ml-2">Đóng</button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- TAB 1: PRODUCTS -->
+                <div id="adminTab-products" class="space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <button onclick="document.getElementById('addProductBox').classList.toggle('hidden')" class="px-4 py-2 rounded-full bg-sakura-500 text-white font-display font-bold text-xs shadow-sm">
+                            + Thêm Sản Phẩm Mới
+                        </button>
+                    </div>
+
+                    <!-- Add Product Box -->
+                    <div id="addProductBox" class="hidden p-5 rounded-2xl bg-sakura-50 border border-sakura-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                        <div class="lg:col-span-2 space-y-1"><label class="font-bold text-slate-600">Tên mô hình *</label><input id="newProdName" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                        <div class="space-y-1"><label class="font-bold text-slate-600">Thương hiệu</label><input id="newProdBrand" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                        <div class="space-y-1"><label class="font-bold text-slate-600">Giá bán (VNĐ) *</label><input id="newProdPrice" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                        
+                        <!-- TÌNH TRẠNG SẢN PHẨM -->
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-600">Tình Trạng Sản Phẩm</label>
+                            <select id="newProdCondition" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white font-bold text-sakura-600">
+                                <option value="Mới Full box">✨ Mới Full box</option>
+                                <option value=">98%">💎 >98% (Như mới)</option>
+                                <option value=">95%">⭐ >95% (Đẹp)</option>
+                                <option value="90%">📦 90% (Khá)</option>
+                            </select>
+                        </div>
+
+                        <!-- UPLOAD IMAGE BOX -->
+                        <div class="space-y-1 sm:col-span-3">
+                            <label class="font-bold text-slate-600">Hình Ảnh Sản Phẩm (Tải lên hoặc dùng Link)</label>
+                            <div class="flex items-center gap-3">
+                                <img id="newProdImgPreview" src="https://placehold.co/100x100/ffe8f0/ff528a?text=IMG" class="w-12 h-12 rounded-lg object-cover border border-sakura-200 shrink-0">
+                                <div class="flex-1 space-y-2">
+                                    <input type="file" accept="image/*" onchange="processImageUpload(event, 'newProdImage', 'newProdImgPreview')" class="text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer">
+                                    <input id="newProdImage" type="text" placeholder="Hoặc dán Link URL ảnh..." class="w-full rounded-xl border border-sakura-200 px-3 py-1.5 text-xs" oninput="document.getElementById('newProdImgPreview').src=this.value">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1"><label class="font-bold text-slate-600">Danh Mục</label>
+                            <select id="newProdCat" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                                <option value="Scale Figure">Scale Figure</option>
+                                <option value="Nendoroid Chibi">Nendoroid Chibi</option>
+                                <option value="Gundam Mecha">Gundam Mecha</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1"><label class="font-bold text-slate-600">Vị trí hiển thị</label>
+                            <select id="newProdLocation" class="w-full rounded-xl border border-sakura-300 px-3 py-2 bg-white font-bold text-sakura-600">
+                                <option value="catalog">Tủ Kệ Mô Hình (Thường)</option>
+                                <option value="flashsale">⚡ Flash Sale (Giờ Vàng)</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-4 flex justify-end"><button onclick="addNewProductAdmin()" class="px-8 rounded-xl bg-emerald-500 text-white font-bold py-2.5">Lưu Lên Shop</button></div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-2xl border border-sakura-200 bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-sakura-50 border-b border-sakura-200 text-sakura-text font-display">
+                                    <th class="p-3">Sản Phẩm</th>
+                                    <th class="p-3">Danh Mục / Tình Trạng</th>
+                                    <th class="p-3">Giá Bán</th>
+                                    <th class="p-3 text-center">Tồn Kho</th>
+                                    <th class="p-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductRows" class="divide-y divide-sakura-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: USERS -->
+                <div id="adminTab-users" class="hidden space-y-4">
+                    <div class="overflow-x-auto rounded-2xl border border-sakura-200 bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-sakura-50 border-b border-sakura-200 text-sakura-text font-display">
+                                    <th class="p-3">Tài Khoản</th>
+                                    <th class="p-3">SĐT / Email</th>
+                                    <th class="p-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUserRows" class="divide-y divide-sakura-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: SETTINGS -->
+                <div id="adminTab-settings" class="hidden max-w-4xl mx-auto space-y-5">
+                    <div class="p-5 rounded-2xl bg-sakura-50/70 border border-sakura-200 space-y-5 text-xs">
+                        <h3 class="font-display font-bold text-sm text-sakura-text border-b border-sakura-200 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-sakura-500"></i> Tuỳ Chỉnh Mọi Văn Bản & Banner Trên Trang Web
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold mb-1">Tiêu Đề Trình Duyệt (Tab Title)</label>
+                                <input id="cfgPageTitle" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tên Shop Chính (Logo Title)</label>
+                                <input id="cfgLogoTitle" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tên Shop Phụ (Logo Subtitle)</label>
+                                <input id="cfgLogoSub" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Dòng Huy Hiệu Hero (Badge)</label>
+                                <input id="cfgHeroBadge" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block font-bold mb-1">Tiêu Đề Lớn Banner (Hero Main)</label>
+                                <input id="cfgHeroMain" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block font-bold mb-1">Tiêu Đề Gradient Nổi Bật Banner (Hero Highlight)</label>
+                                <input id="cfgHeroHighlight" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block font-bold mb-1">Đoạn Văn Mô Tả Giới Thiệu (Hero Description)</label>
+                                <textarea id="cfgHeroDesc" rows="3" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white"></textarea>
+                            </div>
+
+                            <div class="sm:col-span-2 space-y-1 bg-white p-3 rounded-xl border border-sakura-200">
+                                <label class="font-bold text-sakura-600 block">Hình Ảnh Lớn Banner Trang Chủ (Hero Image)</label>
+                                <div class="flex items-center gap-3">
+                                    <img id="cfgBannerImgPreview" src="" class="w-16 h-16 rounded-xl object-cover border border-sakura-200 shrink-0 bg-sakura-50">
+                                    <div class="flex-1 space-y-2">
+                                        <input type="file" accept="image/*" onchange="processImageUpload(event, 'cfgBannerImage', 'cfgBannerImgPreview')" class="text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-sakura-50 file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer">
+                                        <input id="cfgBannerImage" type="text" placeholder="Hoặc dán Link URL ảnh banner..." class="w-full rounded-xl border border-sakura-200 px-3 py-1.5 text-xs" oninput="document.getElementById('cfgBannerImgPreview').src=this.value">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold mb-1">Tên Hãng Hiển Thị Trên Banner</label>
+                                <input id="cfgBannerBrand" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tên Sản Phẩm Trên Banner</label>
+                                <input id="cfgBannerProdName" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tiêu Đề Khung Giờ Vàng (Flash Sale Title)</label>
+                                <input id="cfgFlashTitle" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tiêu Đề Nhỏ Mục Giờ Vàng (Flash Subtitle)</label>
+                                <input id="cfgFlashSubtitle" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Tiêu Đề Tủ Kệ Mô Hình (Catalog Title)</label>
+                                <input id="cfgCatalogTitle" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Nhãn Tag Tủ Kệ (Catalog Tag)</label>
+                                <input id="cfgCatalogTag" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Bản Quyền Chân Trang (Footer Copyright)</label>
+                                <input id="cfgFooterText" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Chữ Phụ Chân Trang (Footer Subtext)</label>
+                                <input id="cfgFooterSubText" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="saveSiteConfig()" class="px-6 py-2.5 rounded-full bg-sakura-500 text-white font-display font-bold text-xs shadow-md hover:bg-sakura-600 transition-colors">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i> Lưu Toàn Bộ Cấu Hình Lên Đám Mây
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: ORDERS -->
+                <div id="adminTab-orders" class="hidden space-y-3">
+                    <div id="adminOrdersList" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT PRODUCT MODAL -->
+    <div id="editProductModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-sakura-text/60 backdrop-blur-sm">
+        <div class="w-full max-w-2xl rounded-[2rem] bg-white border-2 border-sakura-200 p-6 shadow-xl relative">
+            <button onclick="closeEditProductAdmin()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-sakura-50 hover:bg-sakura-500 text-slate-400 hover:text-white flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-display font-bold text-lg text-sakura-text mb-4 border-b border-sakura-100 pb-2">CHỈNH SỬA SẢN PHẨM</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <input type="hidden" id="editProdId">
+                <div class="sm:col-span-2 space-y-1"><label class="font-bold">Tên mô hình</label><input id="editProdName" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                
+                <div class="sm:col-span-2 space-y-1">
+                    <label class="font-bold">Hình Ảnh Sản Phẩm (Tải ảnh từ máy hoặc dùng Link)</label>
+                    <div class="flex items-center gap-3 bg-sakura-50/50 p-2 rounded-xl border border-sakura-100">
+                        <img id="editProdImgPreview" src="" class="w-16 h-16 rounded-xl object-cover border border-sakura-200 shrink-0 bg-white">
+                        <div class="flex-1 space-y-2">
+                            <input type="file" accept="image/*" onchange="processImageUpload(event, 'editProdImage', 'editProdImgPreview')" class="text-xs w-full file:mr-2 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer shadow-sm">
+                            <input id="editProdImage" type="text" placeholder="Hoặc dán Link URL ảnh..." class="w-full rounded-xl border border-sakura-200 px-3 py-2 text-xs" oninput="document.getElementById('editProdImgPreview').src=this.value">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1"><label class="font-bold">Hãng</label><input id="editProdBrand" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                <div class="space-y-1"><label class="font-bold">Giá bán</label><input id="editProdPrice" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                <div class="space-y-1">
+                    <label class="font-bold">Tình Trạng Sản Phẩm</label>
+                    <select id="editProdCondition" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white font-bold text-sakura-600">
+                        <option value="Mới Full box">✨ Mới Full box</option>
+                        <option value=">98%">💎 >98% (Như mới)</option>
+                        <option value=">95%">⭐ >95% (Đẹp)</option>
+                        <option value="90%">📦 90% (Khá)</option>
+                    </select>
+                </div>
+                <div class="space-y-1"><label class="font-bold">Tồn kho</label><input id="editProdStock" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
+                <div class="space-y-1"><label class="font-bold">Danh Mục</label>
+                    <select id="editProdCat" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
+                        <option value="Scale Figure">Scale Figure</option>
+                        <option value="Nendoroid Chibi">Nendoroid Chibi</option>
+                        <option value="Gundam Mecha">Gundam Mecha</option>
+                    </select>
+                </div>
+                <div class="space-y-1 sm:col-span-2"><label class="font-bold text-sakura-600">Vị trí hiển thị</label>
+                    <select id="editProdLocation" class="w-full rounded-xl border border-sakura-300 px-3 py-2 bg-sakura-50 font-bold">
+                        <option value="catalog">Tủ Kệ Mô Hình (Thường)</option>
+                        <option value="flashsale">⚡ Flash Sale (Giờ Vàng)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-5 flex gap-3">
+                <button onclick="saveEditedProduct()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-display font-bold shadow-sm">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4"></div>
+
+    <script>
+        const defaultProducts = [
+            { id: 1, name: "Sakura Miku Spring Festival", category: "Scale Figure", brand: "Good Smile Company", price: 3450000, oldPrice: 4200000, scale: "Tỷ lệ 1/7", height: "25.5 cm", condition: "Mới Full box", rating: 4.9, isFlashSale: true, stockLeft: 6, image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" },
+            { id: 2, name: "Gojo Satoru Nendoroid", category: "Nendoroid Chibi", brand: "Good Smile", price: 1850000, oldPrice: 2200000, scale: "Chibi", height: "10 cm", condition: ">98%", rating: 5.0, isFlashSale: false, stockLeft: 8, image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" }
+        ];
+
+        const defaultSiteConfig = {
+            pageTitle: "SAKURA FIGURE | Thế Giới Mô Hình Anime Ngọt Ngào",
+            logoTitle: "SAKURA",
+            logoSub: "ANIME FIGURE",
+            heroBadge: "🌸 Bộ Sưu Tập Anime Mùa Hoa Anh Đào 2026",
+            heroMain: "GÓC NHỎ NGỌT NGÀO",
+            heroHighlight: "CHO TÍN ĐỒ ANIME",
+            heroDesc: "Chào mừng bạn đến với thiên đường Nendoroid, Scale Figure, Chibi & Waifu/Husbando chính hãng 100% từ Nhật Bản. Màu sắc trong trẻo, đường nét tinh tế mang nhân vật yêu thích về ngay bàn học của bạn!",
+            bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1000&q=85",
+            bannerBrand: "Good Smile Company",
+            bannerProdName: "Sakura Miku - Hanami Fairy",
+            flashTitle: "RƯỚC FIGURE XINH - GIÁ YÊU THƯƠNG",
+            flashSubtitle: "Giờ Vàng Ngọt Ngào Hôm Nay",
+            catalogTitle: "TỦ KỆ PHÂN LOẠI MÔ HÌNH",
+            catalogTag: "🌸 BỘ SƯU TẬP ĐA DẠNG",
+            footerText: "© 2026 SAKURA FIGURE SHOP. Thiết kế ngọt ngào dành cho cộng đồng Anime Việt Nam.",
+            footerSubText: "🌸 Sakura Collectibles"
+        };
+
+        let products = JSON.parse(JSON.stringify(defaultProducts));
+        let siteConfig = JSON.parse(JSON.stringify(defaultSiteConfig));
+        let cart = [], orders = [], users = [];
+        let currentUser = null;
+        let currentCategory = 'all';
+        let db, auth, appId = 'sakura-shop-default';
+
+        let currentOTP = null;
+        let resetTargetUser = null;
+
+        async function initCloudDatabase() {
+            if (typeof window.firebaseModules === 'undefined') { setTimeout(initCloudDatabase, 200); return; }
+            const { initializeApp, getAuth, signInAnonymously, getFirestore } = window.firebaseModules;
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
+            
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            try {
+                await signInAnonymously(auth);
+                await loadCloudData();
+            } catch (err) { console.log("Offline mode", err); applySiteConfig(); renderProducts(); renderFlashSale(); }
+        }
+
+        async function loadCloudData() {
+            if (!db) return;
+            try {
+                const storeRef = window.firebaseModules.doc(db, 'artifacts', appId, 'public', 'data', 'store_state');
+                const snap = await window.firebaseModules.getDoc(storeRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.products) products = data.products;
+                    if (data.orders) orders = data.orders;
+                    if (data.users) users = data.users;
+                    if (data.siteConfig) siteConfig = data.siteConfig;
+                }
+            } catch (e) { }
+            applySiteConfig();
+            renderFlashSale();
+            renderProducts();
+        }
+
+        async function saveCloudData() {
+            if (!db) return;
+            try {
+                const storeRef = window.firebaseModules.doc(db, 'artifacts', appId, 'public', 'data', 'store_state');
+                await window.firebaseModules.setDoc(storeRef, { products, orders, users, siteConfig });
+            } catch (e) { }
+        }
+
+        function formatVND(num) { return Number(num || 0).toLocaleString('vi-VN') + ' ₫'; }
+        
+        function processImageUpload(event, inputId, previewId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Str = e.target.result;
+                document.getElementById(inputId).value = base64Str;
+                document.getElementById(previewId).src = base64Str;
+                showToast('Đã tải ảnh lên thành công! 🌸');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applySiteConfig() {
+            if(document.getElementById('pageTitleTag')) document.title = siteConfig.pageTitle || defaultSiteConfig.pageTitle;
+            if(document.getElementById('siteLogoTitle')) document.getElementById('siteLogoTitle').textContent = siteConfig.logoTitle || defaultSiteConfig.logoTitle;
+            if(document.getElementById('siteLogoSubtitle')) document.getElementById('siteLogoSubtitle').textContent = siteConfig.logoSub || defaultSiteConfig.logoSub;
+            if(document.getElementById('heroBadgeText')) document.getElementById('heroBadgeText').textContent = siteConfig.heroBadge || defaultSiteConfig.heroBadge;
+            if(document.getElementById('heroMainTitle')) document.getElementById('heroMainTitle').textContent = siteConfig.heroMain || defaultSiteConfig.heroMain;
+            if(document.getElementById('heroHighlightTitle')) document.getElementById('heroHighlightTitle').textContent = siteConfig.heroHighlight || defaultSiteConfig.heroHighlight;
+            if(document.getElementById('heroDescText')) document.getElementById('heroDescText').textContent = siteConfig.heroDesc || defaultSiteConfig.heroDesc;
+            
+            if(document.getElementById('heroBannerImg')) document.getElementById('heroBannerImg').src = siteConfig.bannerImage || defaultSiteConfig.bannerImage;
+            if(document.getElementById('heroBannerBrand')) document.getElementById('heroBannerBrand').textContent = siteConfig.bannerBrand || defaultSiteConfig.bannerBrand;
+            if(document.getElementById('heroBannerProdName')) document.getElementById('heroBannerProdName').textContent = siteConfig.bannerProdName || defaultSiteConfig.bannerProdName;
+
+            if(document.getElementById('flashTitle')) document.getElementById('flashTitle').textContent = siteConfig.flashTitle || defaultSiteConfig.flashTitle;
+            if(document.getElementById('flashSubtitle')) document.getElementById('flashSubtitle').innerHTML = `<i class="fa-solid fa-bolt"></i> ${siteConfig.flashSubtitle || defaultSiteConfig.flashSubtitle}`;
+            
+            if(document.getElementById('catalogSectionTitle')) document.getElementById('catalogSectionTitle').textContent = siteConfig.catalogTitle || defaultSiteConfig.catalogTitle;
+            if(document.getElementById('catalogSectionTag')) document.getElementById('catalogSectionTag').textContent = siteConfig.catalogTag || defaultSiteConfig.catalogTag;
+
+            if(document.getElementById('footerCopyrightText')) document.getElementById('footerCopyrightText').textContent = siteConfig.footerText || defaultSiteConfig.footerText;
+            if(document.getElementById('footerSubText')) document.getElementById('footerSubText').textContent = siteConfig.footerSubText || defaultSiteConfig.footerSubText;
+        }
+
+        async function saveSiteConfig() {
+            siteConfig = {
+                pageTitle: document.getElementById('cfgPageTitle').value.trim() || defaultSiteConfig.pageTitle,
+                logoTitle: document.getElementById('cfgLogoTitle').value.trim() || defaultSiteConfig.logoTitle,
+                logoSub: document.getElementById('cfgLogoSub').value.trim() || defaultSiteConfig.logoSub,
+                heroBadge: document.getElementById('cfgHeroBadge').value.trim() || defaultSiteConfig.heroBadge,
+                heroMain: document.getElementById('cfgHeroMain').value.trim() || defaultSiteConfig.heroMain,
+                heroHighlight: document.getElementById('cfgHeroHighlight').value.trim() || defaultSiteConfig.heroHighlight,
+                heroDesc: document.getElementById('cfgHeroDesc').value.trim() || defaultSiteConfig.heroDesc,
+                bannerImage: document.getElementById('cfgBannerImage').value.trim() || defaultSiteConfig.bannerImage,
+                bannerBrand: document.getElementById('cfgBannerBrand').value.trim() || defaultSiteConfig.bannerBrand,
+                bannerProdName: document.getElementById('cfgBannerProdName').value.trim() || defaultSiteConfig.bannerProdName,
+                flashTitle: document.getElementById('cfgFlashTitle').value.trim() || defaultSiteConfig.flashTitle,
+                flashSubtitle: document.getElementById('cfgFlashSubtitle').value.trim() || defaultSiteConfig.flashSubtitle,
+                catalogTitle: document.getElementById('cfgCatalogTitle').value.trim() || defaultSiteConfig.catalogTitle,
+                catalogTag: document.getElementById('cfgCatalogTag').value.trim() || defaultSiteConfig.catalogTag,
+                footerText: document.getElementById('cfgFooterText').value.trim() || defaultSiteConfig.footerText,
+                footerSubText: document.getElementById('cfgFooterSubText').value.trim() || defaultSiteConfig.footerSubText
+            };
+            await saveCloudData();
+            applySiteConfig();
+            showToast('Đã lưu toàn bộ cấu hình trang web thành công! 🌸');
+        }
+
+        /* --- AUTH & OTP --- */
+        function toggleAuthModal(open) {
+            const modal = document.getElementById('authModal');
+            if (open) {
+                if (currentUser) {
+                    switchAuthView('profile');
+                    document.getElementById('profileUsername').textContent = currentUser.username;
+                    document.getElementById('profileRoleBadge').textContent = currentUser.role === 'admin' ? 'Quản Trị Viên (Admin)' : 'Thành Viên';
+                    document.getElementById('profileOpenAdminBtn').classList.toggle('hidden', currentUser.role !== 'admin');
+                } else { switchAuthView('login'); }
+                modal.classList.remove('hidden'); modal.classList.add('flex');
+            } else { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+        }
+
+        function switchAuthView(view) {
+            ['Login', 'Register', 'Forgot', 'Profile'].forEach(v => document.getElementById(`authView${v}`).classList.add('hidden'));
+            document.getElementById(`authView${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
+            if(view === 'forgot') document.getElementById('otpStepBox').classList.add('hidden');
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+            if (u === 'admin' && p === 'admin1234') {
+                currentUser = { username: 'admin', role: 'admin' };
+                updateHeaderAccountUI(); toggleAuthModal(false); toggleAdminModal(true); return;
+            }
+            const found = users.find(acc => (acc.username === u || acc.email === u || acc.phone === u) && acc.password === p);
+            if (!found) { showToast('Sai tên đăng nhập, SĐT/Email hoặc mật khẩu!'); return; }
+            currentUser = { username: found.username, role: 'customer' };
+            updateHeaderAccountUI(); toggleAuthModal(false); showToast(`Chào mừng ${found.username}!`);
+        }
+
+        async function loginWithGoogle() {
+            try {
+                const provider = new window.firebaseModules.GoogleAuthProvider();
+                const result = await window.firebaseModules.signInWithPopup(auth, provider);
+                const user = result.user;
+                if(!users.find(u => u.email === user.email)) {
+                    users.push({ username: user.displayName || 'GoogleUser', email: user.email, password: 'google_oauth_no_pass' });
+                    await saveCloudData();
+                }
+                currentUser = { username: user.displayName || 'Khách Google', role: 'customer' };
+                updateHeaderAccountUI(); toggleAuthModal(false); showToast(`Đăng nhập Google thành công!`);
+            } catch (error) {
+                const mockName = "Khách Hàng (Google Demo)";
+                if(!users.find(u => u.username === mockName)) {
+                    users.push({ username: mockName, email: "demo@gmail.com", password: '123' });
+                    saveCloudData();
+                }
+                currentUser = { username: mockName, role: 'customer' };
+                updateHeaderAccountUI(); toggleAuthModal(false); showToast(`[Demo] Đăng nhập Google giả lập thành công!`);
+            }
+        }
+
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUsername').value.trim();
+            const eMail = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const p = document.getElementById('regPassword').value.trim();
+
+            if (users.some(acc => acc.username.toLowerCase() === u.toLowerCase() || (eMail && acc.email === eMail))) {
+                showToast('Tên tài khoản hoặc Email đã tồn tại!'); return;
+            }
+            users.push({ username: u, email: eMail, phone: phone, password: p });
+            currentUser = { username: u, role: 'customer' };
+            await saveCloudData(); updateHeaderAccountUI(); toggleAuthModal(false); showToast(`Đăng ký thành công!`);
+        }
+
+        function sendOTP() {
+            const info = document.getElementById('forgotInfo').value.trim();
+            const user = users.find(u => u.username === info || u.email === info || u.phone === info);
+            if (!user) { showToast('Không tìm thấy tài khoản với thông tin này!'); return; }
+            
+            resetTargetUser = user;
+            currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            showToast(`[HỆ THỐNG] Mã OTP của bạn là: ${currentOTP}`);
+            document.getElementById('otpStepBox').classList.remove('hidden');
+        }
+
+        async function verifyOTPAndReset() {
+            const otp = document.getElementById('forgotOTP').value.trim();
+            const newPass = document.getElementById('forgotNewPass').value.trim();
+            if (otp !== currentOTP) { showToast('Mã OTP không chính xác!'); return; }
+            if (!newPass) { showToast('Vui lòng nhập mật khẩu mới!'); return; }
+            
+            resetTargetUser.password = newPass;
+            await saveCloudData();
+            showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
+            switchAuthView('login');
+        }
+
+        function logoutAccount() { currentUser = null; updateHeaderAccountUI(); toggleAuthModal(false); showToast('Đã đăng xuất.'); }
+        function updateHeaderAccountUI() {
+            document.getElementById('headerAccountLabel').textContent = currentUser ? currentUser.username : 'Tài Khoản';
+            document.getElementById('headerAdminBtn').classList.toggle('hidden', !(currentUser && currentUser.role === 'admin'));
+            document.getElementById('headerAdminBtn').classList.toggle('flex', !!(currentUser && currentUser.role === 'admin'));
+        }
+
+        /* --- ADMIN CMS --- */
+        function toggleAdminModal(open) {
+            if (open && (!currentUser || currentUser.role !== 'admin')) { toggleAuthModal(true); return; }
+            const modal = document.getElementById('adminModal');
+            if (open) { renderAdminDashboard(); modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            else { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+        }
+
+        function switchAdminTab(tab) {
+            ['products', 'users', 'settings', 'orders'].forEach(t => {
+                document.getElementById(`adminTab-${t}`).classList.toggle('hidden', t !== tab);
+                const btn = document.getElementById(`tabBtn-${t}`);
+                if (t === tab) btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-sakura-500 text-white whitespace-nowrap";
+                else btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap";
+            });
+        }
+
+        function renderAdminDashboard() {
+            document.getElementById('adminCountProds').textContent = products.length;
+            document.getElementById('adminCountOrders').textContent = orders.length;
+
+            document.getElementById('adminProductRows').innerHTML = products.map(p => `
+                <tr class="hover:bg-sakura-50/40">
+                    <td class="p-3 flex items-center gap-2.5">
+                        <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover border border-sakura-200">
+                        <span class="font-bold text-sakura-text line-clamp-1 max-w-[150px]">${p.name}</span>
+                    </td>
+                    <td class="p-3 text-slate-500">
+                        ${p.category}<br/>
+                        <span class="text-[10px] bg-sakura-100 text-sakura-600 px-1.5 py-0.5 rounded font-bold">${p.condition || 'Mới Full box'}</span>
+                    </td>
+                    <td class="p-3 font-bold text-sakura-600">${formatVND(p.price)}</td>
+                    <td class="p-3 text-center">${p.stockLeft || 0}</td>
+                    <td class="p-3 text-right space-x-1">
+                        <button onclick="openEditProductAdmin(${p.id})" class="px-3 py-1 rounded-lg bg-sky-100 text-sky-600 font-bold">Sửa</button>
+                        <button onclick="deleteProductAdmin(${p.id})" class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-600 font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminUserRows').innerHTML = users.map(u => `
+                <tr class="hover:bg-sakura-50/40">
+                    <td class="p-3 font-bold"><i class="fa-solid fa-user text-sakura-400 mr-2"></i>${u.username}</td>
+                    <td class="p-3 text-slate-500">${u.phone || u.email || 'Chưa cập nhật'}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="users = users.filter(x => x.username !== '${u.username}'); saveCloudData(); renderAdminDashboard();" class="px-3 py-1 rounded-lg bg-rose-100 text-rose-600 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('cfgPageTitle').value = siteConfig.pageTitle || defaultSiteConfig.pageTitle;
+            document.getElementById('cfgLogoTitle').value = siteConfig.logoTitle || defaultSiteConfig.logoTitle;
+            document.getElementById('cfgLogoSub').value = siteConfig.logoSub || defaultSiteConfig.logoSub;
+            document.getElementById('cfgHeroBadge').value = siteConfig.heroBadge || defaultSiteConfig.heroBadge;
+            document.getElementById('cfgHeroMain').value = siteConfig.heroMain || defaultSiteConfig.heroMain;
+            document.getElementById('cfgHeroHighlight').value = siteConfig.heroHighlight || defaultSiteConfig.heroHighlight;
+            document.getElementById('cfgHeroDesc').value = siteConfig.heroDesc || defaultSiteConfig.heroDesc;
+            
+            document.getElementById('cfgBannerImage').value = siteConfig.bannerImage || defaultSiteConfig.bannerImage;
+            document.getElementById('cfgBannerImgPreview').src = siteConfig.bannerImage || defaultSiteConfig.bannerImage;
+            document.getElementById('cfgBannerBrand').value = siteConfig.bannerBrand || defaultSiteConfig.bannerBrand;
+            document.getElementById('cfgBannerProdName').value = siteConfig.bannerProdName || defaultSiteConfig.bannerProdName;
+
+            document.getElementById('cfgFlashTitle').value = siteConfig.flashTitle || defaultSiteConfig.flashTitle;
+            document.getElementById('cfgFlashSubtitle').value = siteConfig.flashSubtitle || defaultSiteConfig.flashSubtitle;
+            document.getElementById('cfgCatalogTitle').value = siteConfig.catalogTitle || defaultSiteConfig.catalogTitle;
+            document.getElementById('cfgCatalogTag').value = siteConfig.catalogTag || defaultSiteConfig.catalogTag;
+            document.getElementById('cfgFooterText').value = siteConfig.footerText || defaultSiteConfig.footerText;
+            document.getElementById('cfgFooterSubText').value = siteConfig.footerSubText || defaultSiteConfig.footerSubText;
+
+            document.getElementById('adminOrdersList').innerHTML = orders.length ? orders.map((o, idx) => `
+                <div class="p-4 rounded-2xl bg-sakura-50/50 border border-sakura-200 text-xs flex justify-between">
+                    <div><b>${o.orderId}</b> - KH: ${o.customerName} (${o.phone})<br/>Sp: ${o.items.map(i => i.name).join(', ')}</div>
+                    <div class="text-right"><span class="font-bold text-sakura-600">${formatVND(o.total)}</span><br/><button onclick="orders.splice(${idx},1); renderAdminDashboard();" class="text-rose-500 underline">Xóa</button></div>
+                </div>
+            `).join('') : '<div class="text-center py-5 text-slate-400">Trống</div>';
+        }
+
+        async function addNewProductAdmin() {
+            const name = document.getElementById('newProdName').value.trim();
+            const brand = document.getElementById('newProdBrand').value.trim() || 'Hãng khác';
+            const price = parseInt(document.getElementById('newProdPrice').value, 10) || 1000000;
+            const condition = document.getElementById('newProdCondition').value;
+            const img = document.getElementById('newProdImage').value.trim() || 'https://placehold.co/600x600/ffe8f0/ff528a?text=FIGURE';
+            const cat = document.getElementById('newProdCat').value;
+            const isFlash = document.getElementById('newProdLocation').value === 'flashsale';
+
+            if (!name) { showToast('Vui lòng nhập tên mô hình!'); return; }
+            products.unshift({
+                id: Date.now(), name, brand, category: cat, price, oldPrice: Math.round(price * 1.2), condition,
+                badge: "Mới Về", isFlashSale: isFlash, stockLeft: 10, image: img, rating: 5.0
+            });
+            await saveCloudData(); renderFlashSale(); renderProducts(); renderAdminDashboard();
+            showToast('Đã thêm sản phẩm mới!');
+        }
+
+        function openEditProductAdmin(id) {
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('editProdId').value = p.id;
+            document.getElementById('editProdName').value = p.name;
+            document.getElementById('editProdBrand').value = p.brand;
+            document.getElementById('editProdPrice').value = p.price;
+            document.getElementById('editProdCondition').value = p.condition || 'Mới Full box';
+            document.getElementById('editProdImage').value = p.image;
+            document.getElementById('editProdImgPreview').src = p.image;
+            document.getElementById('editProdStock').value = p.stockLeft || 0;
+            document.getElementById('editProdCat').value = p.category;
+            document.getElementById('editProdLocation').value = p.isFlashSale ? 'flashsale' : 'catalog';
+            
+            document.getElementById('editProductModal').classList.remove('hidden');
+            document.getElementById('editProductModal').classList.add('flex');
+        }
+
+        function closeEditProductAdmin() {
+            document.getElementById('editProductModal').classList.add('hidden');
+            document.getElementById('editProductModal').classList.remove('flex');
+        }
+
+        async function saveEditedProduct() {
+            const id = parseInt(document.getElementById('editProdId').value);
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            p.name = document.getElementById('editProdName').value;
+            p.brand = document.getElementById('editProdBrand').value;
+            p.price = parseInt(document.getElementById('editProdPrice').value) || p.price;
+            p.condition = document.getElementById('editProdCondition').value;
+            p.image = document.getElementById('editProdImage').value;
+            p.stockLeft = parseInt(document.getElementById('editProdStock').value) || 0;
+            p.category = document.getElementById('editProdCat').value;
+            p.isFlashSale = document.getElementById('editProdLocation').value === 'flashsale';
+
+            await saveCloudData();
+            closeEditProductAdmin(); renderFlashSale(); renderProducts(); renderAdminDashboard();
+            showToast('Lưu chỉnh sửa thành công!');
+        }
+
+        async function deleteProductAdmin(id) { products = products.filter(p => p.id !== id); await saveCloudData(); renderAdminDashboard(); renderFlashSale(); renderProducts(); showToast('Đã xóa.'); }
+
+        /* --- SHOP RENDER & CART --- */
+        function renderFlashSale() {
+            const container = document.getElementById('flashSaleContainer');
+            const items = products.filter(p => p.isFlashSale);
+            container.innerHTML = items.length ? items.map(p => `
+                <div class="tilt-card rounded-[1.8rem] bg-white border-2 border-sakura-200 p-4 flex flex-col justify-between">
+                    <div class="tilt-content space-y-3 relative">
+                        <span class="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-sakura-600 text-[10px] font-bold shadow-sm">${p.condition || 'Mới Full box'}</span>
+                        <img src="${p.image}" class="w-full h-48 object-cover rounded-2xl cursor-pointer">
+                        <h3 class="font-bold text-sakura-text line-clamp-1">${p.name}</h3>
+                        <div class="font-bold text-sakura-600 text-lg">${formatVND(p.price)}</div>
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="mt-4 py-2.5 rounded-full bg-gradient-to-r from-sakura-400 to-sakura-500 text-white font-bold text-xs">Thêm Giỏ Hàng</button>
+                </div>`).join('') : '<div class="col-span-3 text-center py-8 text-slate-400">Không có deal Flash Sale.</div>';
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            document.getElementById('count-all').textContent = products.length;
+            let filtered = products.filter(p => (currentCategory === 'all' || p.category === currentCategory));
+            grid.innerHTML = filtered.length ? filtered.map(p => `
+                <div class="tilt-card rounded-[2rem] bg-white border-2 border-sakura-200 p-4 flex flex-col justify-between">
+                    <div class="tilt-content space-y-3 relative">
+                        <span class="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-sakura-600 text-[10px] font-bold shadow-sm">${p.condition || 'Mới Full box'}</span>
+                        <img src="${p.image}" class="w-full h-56 object-cover rounded-2xl cursor-pointer">
+                        <h3 class="font-bold text-sakura-text line-clamp-1">${p.name}</h3>
+                        <div class="font-bold text-sakura-600 text-lg">${formatVND(p.price)}</div>
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="mt-4 py-2.5 rounded-full bg-sakura-50 text-sakura-600 border border-sakura-200 font-bold text-xs hover:bg-sakura-100">Thêm Vào Giỏ</button>
+                </div>`).join('') : '<div class="col-span-4 text-center py-10 text-slate-500">Trống</div>';
+        }
+
+        function setCategory(cat) { currentCategory = cat; renderProducts(); }
+        function toggleCart(open) { const c = document.getElementById('cartDrawer'), o = document.getElementById('cartOverlay'); if(open) { updateCartUI(); c.classList.remove('hidden'); c.classList.add('flex'); o.classList.remove('hidden'); } else { c.classList.add('hidden'); c.classList.remove('flex'); o.classList.add('hidden'); } }
+        function addToCart(id) { if(!currentUser){ toggleAuthModal(true); return; } const p = products.find(x => x.id === id); const ex = cart.find(x => x.id === id); if(ex) ex.quantity++; else cart.push({...p, quantity: 1}); showToast('Đã thêm!'); updateCartUI(); }
+        function updateCartUI() { document.getElementById('cartCountBadge').textContent = cart.reduce((s, i) => s + i.quantity, 0); document.getElementById('cartTotalPrice').textContent = formatVND(cart.reduce((s, i) => s + i.price * i.quantity, 0)); document.getElementById('cartUserStatus').textContent = currentUser ? currentUser.username : 'Chưa đăng nhập'; document.getElementById('cartLoginNotice').classList.toggle('hidden', !!currentUser); document.getElementById('cartCheckoutForm').classList.toggle('hidden', !currentUser); }
+        async function checkoutOrder() { if(cart.length===0) return; orders.unshift({ orderId: '#SKR-'+Math.floor(10000+Math.random()*90000), customerName: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, total: cart.reduce((s, i) => s + i.price * i.quantity, 0), items: [...cart] }); cart = []; await saveCloudData(); toggleCart(false); showToast('Đặt hàng thành công!'); }
+        
+        function showToast(msg) { const c = document.getElementById('toastContainer'), t = document.createElement('div'); t.className = "flex items-center gap-2.5 p-3.5 rounded-2xl bg-white border-2 border-sakura-300 text-sakura-text text-xs shadow-lg"; t.innerHTML = `<i class="fa-solid fa-heart text-sakura-500"></i><span class="font-bold">${msg}</span>`; c.appendChild(t); setTimeout(() => t.remove(), 3500); }
+
+        window.onload = () => { initCloudDatabase(); };
+    </script>
+</body>
+</html>
