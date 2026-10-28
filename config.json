@@ -1,0 +1,52 @@
+{
+  "siteConfig": {
+    "pageTitle": "BÚN CÁ FIGURE | Thế Giới Mô Hình Anime Ngọt Ngào",
+    "logoTitle": "BÚN CÁ",
+    "logoSub": "ANIME FIGURE",
+    "heroBadge": "🌸 Bộ Sưu Tập Anime Mùa Hoa Anh Đào 2026",
+    "heroMain": "GÓC NHỎ NGỌT NGÀO",
+    "heroHighlight": "CHO TÍN ĐỒ ANIME",
+    "heroDesc": "Chào mừng bạn đến với thiên đường Nendoroid, Scale Figure, Chibi & Waifu/Husbando chính hãng 100% từ Nhật Bản. Màu sắc trong trẻo, đường nét tinh tế mang nhân vật yêu thích về ngay bàn học của bạn!",
+    "bannerImage": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1000&q=85",
+    "bannerBrand": "Good Smile Company",
+    "bannerProdName": "Bún Cá Miku - Hanami Fairy",
+    "flashTitle": "RƯỚC FIGURE XINH - GIÁ YÊU THƯƠNG",
+    "flashSubtitle": "Giờ Vàng Ngọt Ngào Hôm Nay",
+    "catalogTitle": "TỦ KỆ PHÂN LOẠI MÔ HÌNH",
+    "catalogTag": "🌸 BỘ SƯU TẬP ĐA DẠNG",
+    "footerText": "© 2026 BÚN CÁ FIGURE SHOP. Thiết kế ngọt ngào dành cho cộng đồng Anime Việt Nam.",
+    "footerSubText": "🌸 Bún Cá Collectibles"
+  },
+  "products": [
+    {
+      "id": 1,
+      "name": "Bún Cá Miku Spring Festival",
+      "category": "Scale Figure",
+      "brand": "Good Smile Company",
+      "price": 3450000,
+      "oldPrice": 4200000,
+      "scale": "Tỷ lệ 1/7",
+      "height": "25.5 cm",
+      "condition": "Mới Full box",
+      "rating": 4.9,
+      "isFlashSale": true,
+      "stockLeft": 6,
+      "image": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 2,
+      "name": "Gojo Satoru Nendoroid",
+      "category": "Nendoroid Chibi",
+      "brand": "Good Smile",
+      "price": 1850000,
+      "oldPrice": 2200000,
+      "scale": "Chibi",
+      "height": "10 cm",
+      "condition": ">98%",
+      "rating": 5.0,
+      "isFlashSale": false,
+      "stockLeft": 8,
+      "image": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
+    }
+  ]
+}
