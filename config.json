@@ -31,7 +31,13 @@
       "rating": 4.9,
       "isFlashSale": true,
       "stockLeft": 6,
-      "image": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80"
+      "image": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80",
+      "conditionPrices": {
+        "Mới Full box": 3450000,
+        ">98%": 312312312,
+        ">95%": 323,
+        "90%": 123312
+      }
     },
     {
       "id": 2,
@@ -43,10 +49,12 @@
       "scale": "Chibi",
       "height": "10 cm",
       "condition": ">98%",
-      "rating": 5.0,
+      "rating": 5,
       "isFlashSale": false,
       "stockLeft": 8,
       "image": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
     }
-  ]
+  ],
+  "orders": [],
+  "users": []
 }
