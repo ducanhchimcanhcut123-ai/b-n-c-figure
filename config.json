@@ -19,6 +19,23 @@
   },
   "products": [
     {
+      "id": 1793206840849,
+      "name": "chim",
+      "brand": "ducanh",
+      "category": "Scale Figure",
+      "price": 2000000,
+      "condition": "Mới Full box",
+      "conditionPrices": {
+        "Mới Full box": 2000000,
+        ">98%": 321111,
+        ">95%": 111111111,
+        "90%": 111111
+      },
+      "isFlashSale": false,
+      "stockLeft": 10,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVYmDLq0yxYn7-VOvA9hYFVR8i0RgFwTRbl80eRGxIag&s=10"
+    },
+    {
       "id": 1,
       "name": "Bún Cá Miku Spring Festival",
       "category": "Scale Figure",
