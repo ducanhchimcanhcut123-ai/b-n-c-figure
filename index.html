@@ -12,18 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        window.firebaseModules = {
-            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, GoogleAuthProvider, signInWithPopup,
-            getFirestore, doc, getDoc, setDoc
-        };
-    </script>
 
     <script>
         tailwind.config = {
@@ -96,7 +84,7 @@
 
             <div class="flex items-center gap-2.5 sm:gap-3 flex-1 lg:flex-initial justify-end">
                 <div class="relative hidden sm:block w-full max-w-[210px] xl:max-w-[250px]">
-                    <input type="text" id="headerSearchInput" placeholder="Tìm Miku, Gojo..." class="w-full bg-sakura-50/90 border border-sakura-200 focus:border-sakura-400 rounded-full py-2 pl-9 pr-4 text-xs sm:text-sm text-sakura-text placeholder-rose-300 focus:outline-none">
+                    <input type="text" id="headerSearchInput" oninput="renderProducts()" placeholder="Tìm Miku, Gojo..." class="w-full bg-sakura-50/90 border border-sakura-200 focus:border-sakura-400 rounded-full py-2 pl-9 pr-4 text-xs sm:text-sm text-sakura-text placeholder-rose-300 focus:outline-none">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-sakura-400 text-xs"></i>
                 </div>
                 <button onclick="toggleAuthModal(true)" class="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-sakura-50 hover:bg-sakura-100 border border-sakura-200 text-sakura-600 font-display font-bold text-xs">
@@ -234,7 +222,7 @@
         <div class="p-3 bg-sakura-100/50 text-[11px] text-sakura-600 font-bold border-b border-sakura-200 flex items-center justify-between">
             <span>Trạng thái: <span id="cartUserStatus" class="underline">Chưa đăng nhập</span></span>
         </div>
-        <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
         <div class="p-5 border-t border-sakura-200 bg-sakura-50/40 space-y-3">
             <div id="cartLoginNotice" class="text-center p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold">
                 Vui lòng <button onclick="toggleCart(false); toggleAuthModal(true);" class="underline text-sakura-600">Đăng Nhập</button> tài khoản để tiến hành đặt hàng!
@@ -259,15 +247,7 @@
                 <div class="text-center">
                     <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-lock"></i></div>
                     <h3 class="font-display font-bold text-base text-sakura-text">ĐĂNG NHẬP</h3>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Dành cho khách hàng thành viên</p>
-                </div>
-                
-                <button onclick="loginWithGoogle()" class="w-full py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-display font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google"> Đăng nhập bằng Google
-                </button>
-                
-                <div class="flex items-center gap-2 text-slate-300 text-xs">
-                    <div class="flex-1 border-b border-slate-200"></div><span>hoặc tài khoản Shop</span><div class="flex-1 border-b border-slate-200"></div>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Dành cho khách hàng & Admin</p>
                 </div>
 
                 <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
@@ -356,6 +336,7 @@
                     <button onclick="switchAdminTab('products')" id="tabBtn-products" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-sakura-500 text-white whitespace-nowrap">Sản Phẩm (<span id="adminCountProds">0</span>)</button>
                     <button onclick="switchAdminTab('users')" id="tabBtn-users" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Khách Hàng</button>
                     <button onclick="switchAdminTab('settings')" id="tabBtn-settings" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Sửa Toàn Bộ Văn Bản & Banner</button>
+                    <button onclick="switchAdminTab('github')" id="tabBtn-github" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">🔗 Kết Nối GitHub</button>
                     <button onclick="switchAdminTab('orders')" id="tabBtn-orders" class="px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap">Đơn Hàng (<span id="adminCountOrders">0</span>)</button>
                     <button onclick="toggleAdminModal(false)" class="px-4 py-1.5 rounded-full bg-slate-200 text-slate-700 font-bold text-xs ml-2">Đóng</button>
                 </div>
@@ -374,31 +355,6 @@
                     <div id="addProductBox" class="hidden p-5 rounded-2xl bg-sakura-50 border border-sakura-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                         <div class="lg:col-span-2 space-y-1"><label class="font-bold text-slate-600">Tên mô hình *</label><input id="newProdName" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
                         <div class="space-y-1"><label class="font-bold text-slate-600">Thương hiệu</label><input id="newProdBrand" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
-                        <div class="space-y-1"><label class="font-bold text-slate-600">Giá bán (VNĐ) *</label><input id="newProdPrice" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
-                        
-                        <!-- TÌNH TRẠNG SẢN PHẨM -->
-                        <div class="space-y-1">
-                            <label class="font-bold text-slate-600">Tình Trạng Sản Phẩm</label>
-                            <select id="newProdCondition" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white font-bold text-sakura-600">
-                                <option value="Mới Full box">✨ Mới Full box</option>
-                                <option value=">98%">💎 >98% (Như mới)</option>
-                                <option value=">95%">⭐ >95% (Đẹp)</option>
-                                <option value="90%">📦 90% (Khá)</option>
-                            </select>
-                        </div>
-
-                        <!-- UPLOAD IMAGE BOX -->
-                        <div class="space-y-1 sm:col-span-3">
-                            <label class="font-bold text-slate-600">Hình Ảnh Sản Phẩm (Tải lên hoặc dùng Link)</label>
-                            <div class="flex items-center gap-3">
-                                <img id="newProdImgPreview" src="https://placehold.co/100x100/ffe8f0/ff528a?text=IMG" class="w-12 h-12 rounded-lg object-cover border border-sakura-200 shrink-0">
-                                <div class="flex-1 space-y-2">
-                                    <input type="file" accept="image/*" onchange="processImageUpload(event, 'newProdImage', 'newProdImgPreview')" class="text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer">
-                                    <input id="newProdImage" type="text" placeholder="Hoặc dán Link URL ảnh..." class="w-full rounded-xl border border-sakura-200 px-3 py-1.5 text-xs" oninput="document.getElementById('newProdImgPreview').src=this.value">
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="space-y-1"><label class="font-bold text-slate-600">Danh Mục</label>
                             <select id="newProdCat" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white">
                                 <option value="Scale Figure">Scale Figure</option>
@@ -406,13 +362,51 @@
                                 <option value="Gundam Mecha">Gundam Mecha</option>
                             </select>
                         </div>
+
+                        <!-- BẢNG GIÁ THEO TỪNG ĐỘ MỚI -->
+                        <div class="lg:col-span-4 bg-white p-3.5 rounded-xl border border-sakura-200 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <label class="font-bold text-sakura-600"><i class="fa-solid fa-tags mr-1"></i> Bảng Giá Theo Độ Mới (VNĐ)</label>
+                                <span class="text-[11px] text-slate-400 italic">* Bỏ trống hoặc điền 0 nếu không bán phân loại độ mới đó</span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-600 block">✨ Mới Full box</label>
+                                    <input id="newPriceFull" type="number" placeholder="VD: 3450000" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-600 block">💎 >98% (Như mới)</label>
+                                    <input id="newPrice98" type="number" placeholder="VD: 3100000" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-600 block">⭐ >95% (Đẹp)</label>
+                                    <input id="newPrice95" type="number" placeholder="VD: 2800000" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-600 block">📦 90% (Khá)</label>
+                                    <input id="newPrice90" type="number" placeholder="VD: 2400000" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- UPLOAD IMAGE BOX -->
+                        <div class="space-y-1 sm:col-span-3">
+                            <label class="font-bold text-slate-600">Hình Ảnh Sản Phẩm (Dán Link ảnh để lưu GitHub nhẹ nhất)</label>
+                            <div class="flex items-center gap-3">
+                                <img id="newProdImgPreview" src="https://placehold.co/100x100/ffe8f0/ff528a?text=IMG" class="w-12 h-12 rounded-lg object-cover border border-sakura-200 shrink-0">
+                                <div class="flex-1 space-y-2">
+                                    <input id="newProdImage" type="text" placeholder="Dán Link URL ảnh (vd: https://...)" class="w-full rounded-xl border border-sakura-200 px-3 py-2 text-xs" oninput="document.getElementById('newProdImgPreview').src=this.value">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="space-y-1"><label class="font-bold text-slate-600">Vị trí hiển thị</label>
                             <select id="newProdLocation" class="w-full rounded-xl border border-sakura-300 px-3 py-2 bg-white font-bold text-sakura-600">
                                 <option value="catalog">Tủ Kệ Mô Hình (Thường)</option>
                                 <option value="flashsale">⚡ Flash Sale (Giờ Vàng)</option>
                             </select>
                         </div>
-                        <div class="lg:col-span-4 flex justify-end"><button onclick="addNewProductAdmin()" class="px-8 rounded-xl bg-emerald-500 text-white font-bold py-2.5">Lưu Lên Shop</button></div>
+                        <div class="lg:col-span-4 flex justify-end"><button onclick="addNewProductAdmin()" class="px-8 rounded-xl bg-emerald-500 text-white font-bold py-2.5">Lưu Lên Shop & GitHub</button></div>
                     </div>
 
                     <div class="overflow-x-auto rounded-2xl border border-sakura-200 bg-white">
@@ -420,8 +414,8 @@
                             <thead>
                                 <tr class="bg-sakura-50 border-b border-sakura-200 text-sakura-text font-display">
                                     <th class="p-3">Sản Phẩm</th>
-                                    <th class="p-3">Danh Mục / Tình Trạng</th>
-                                    <th class="p-3">Giá Bán</th>
+                                    <th class="p-3">Danh Mục</th>
+                                    <th class="p-3">Bảng Giá Theo Độ Mới</th>
                                     <th class="p-3 text-center">Tồn Kho</th>
                                     <th class="p-3 text-right">Thao Tác</th>
                                 </tr>
@@ -485,13 +479,10 @@
                             </div>
 
                             <div class="sm:col-span-2 space-y-1 bg-white p-3 rounded-xl border border-sakura-200">
-                                <label class="font-bold text-sakura-600 block">Hình Ảnh Lớn Banner Trang Chủ (Hero Image)</label>
+                                <label class="font-bold text-sakura-600 block">Link Ảnh Lớn Banner Trang Chủ (Hero Image URL)</label>
                                 <div class="flex items-center gap-3">
                                     <img id="cfgBannerImgPreview" src="" class="w-16 h-16 rounded-xl object-cover border border-sakura-200 shrink-0 bg-sakura-50">
-                                    <div class="flex-1 space-y-2">
-                                        <input type="file" accept="image/*" onchange="processImageUpload(event, 'cfgBannerImage', 'cfgBannerImgPreview')" class="text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-sakura-50 file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer">
-                                        <input id="cfgBannerImage" type="text" placeholder="Hoặc dán Link URL ảnh banner..." class="w-full rounded-xl border border-sakura-200 px-3 py-1.5 text-xs" oninput="document.getElementById('cfgBannerImgPreview').src=this.value">
-                                    </div>
+                                    <input id="cfgBannerImage" type="text" placeholder="Dán Link URL ảnh banner..." class="w-full rounded-xl border border-sakura-200 px-3 py-2 text-xs" oninput="document.getElementById('cfgBannerImgPreview').src=this.value">
                                 </div>
                             </div>
 
@@ -531,7 +522,41 @@
 
                         <div class="pt-2 flex justify-end">
                             <button onclick="saveSiteConfig()" class="px-6 py-2.5 rounded-full bg-sakura-500 text-white font-display font-bold text-xs shadow-md hover:bg-sakura-600 transition-colors">
-                                <i class="fa-solid fa-floppy-disk mr-1.5"></i> Lưu Toàn Bộ Cấu Hình Lên Đám Mây
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i> Lưu Trực Tiếp Vào GitHub (config.json)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: GITHUB SETTINGS -->
+                <div id="adminTab-github" class="hidden max-w-2xl mx-auto space-y-4">
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 text-xs">
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                            <i class="fa-brands fa-github text-xl text-slate-800"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">Cấu Hình Kết Nối Kho GitHub Của Bạn</h4>
+                                <p class="text-slate-500 text-[11px]">Thông tin này chỉ lưu riêng trên máy bạn (LocalStorage), không bị lộ ra ngoài.</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Tên tài khoản GitHub (Owner)</label>
+                                <input id="ghOwnerInput" type="text" placeholder="Ví dụ: nguyenvana" class="w-full border border-slate-300 rounded-xl px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Tên Kho Lưu Trữ (Repository)</label>
+                                <input id="ghRepoInput" type="text" placeholder="Ví dụ: buncashop" class="w-full border border-slate-300 rounded-xl px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Tên Nhánh (Branch)</label>
+                                <input id="ghBranchInput" type="text" placeholder="Mặc định: main" class="w-full border border-slate-300 rounded-xl px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">GitHub Personal Access Token (Token có quyền repo)</label>
+                                <input id="ghTokenInput" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full border border-slate-300 rounded-xl px-3 py-2">
+                            </div>
+                            <button onclick="saveGitHubSettings()" class="w-full py-2.5 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-900 transition-colors">
+                                Lưu Cấu Hình GitHub
                             </button>
                         </div>
                     </div>
@@ -547,35 +572,48 @@
 
     <!-- EDIT PRODUCT MODAL -->
     <div id="editProductModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-sakura-text/60 backdrop-blur-sm">
-        <div class="w-full max-w-2xl rounded-[2rem] bg-white border-2 border-sakura-200 p-6 shadow-xl relative">
+        <div class="w-full max-w-2xl rounded-[2rem] bg-white border-2 border-sakura-200 p-6 shadow-xl relative max-h-[92vh] overflow-y-auto">
             <button onclick="closeEditProductAdmin()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-sakura-50 hover:bg-sakura-500 text-slate-400 hover:text-white flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="font-display font-bold text-lg text-sakura-text mb-4 border-b border-sakura-100 pb-2">CHỈNH SỬA SẢN PHẨM</h3>
+            <h3 class="font-display font-bold text-lg text-sakura-text mb-4 border-b border-sakura-100 pb-2">CHỈNH SỬA SẢN PHẨM & BẢNG GIÁ ĐỘ MỚI</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <input type="hidden" id="editProdId">
                 <div class="sm:col-span-2 space-y-1"><label class="font-bold">Tên mô hình</label><input id="editProdName" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
                 
                 <div class="sm:col-span-2 space-y-1">
-                    <label class="font-bold">Hình Ảnh Sản Phẩm (Tải ảnh từ máy hoặc dùng Link)</label>
+                    <label class="font-bold">Link Ảnh Sản Phẩm</label>
                     <div class="flex items-center gap-3 bg-sakura-50/50 p-2 rounded-xl border border-sakura-100">
                         <img id="editProdImgPreview" src="" class="w-16 h-16 rounded-xl object-cover border border-sakura-200 shrink-0 bg-white">
-                        <div class="flex-1 space-y-2">
-                            <input type="file" accept="image/*" onchange="processImageUpload(event, 'editProdImage', 'editProdImgPreview')" class="text-xs w-full file:mr-2 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white file:text-sakura-600 hover:file:bg-sakura-100 cursor-pointer shadow-sm">
-                            <input id="editProdImage" type="text" placeholder="Hoặc dán Link URL ảnh..." class="w-full rounded-xl border border-sakura-200 px-3 py-2 text-xs" oninput="document.getElementById('editProdImgPreview').src=this.value">
+                        <input id="editProdImage" type="text" placeholder="Dán Link URL ảnh..." class="w-full rounded-xl border border-sakura-200 px-3 py-2 text-xs" oninput="document.getElementById('editProdImgPreview').src=this.value">
+                    </div>
+                </div>
+
+                <!-- BẢNG GIÁ THEO TỪNG ĐỘ MỚI KHI SỬA -->
+                <div class="sm:col-span-2 bg-sakura-50/60 p-3.5 rounded-xl border border-sakura-200 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label class="font-bold text-sakura-600"><i class="fa-solid fa-tags mr-1"></i> Giá Bán Theo Từng Độ Mới (VNĐ)</label>
+                        <span class="text-[10px] text-slate-500">* Để trống hoặc nhập 0 nếu ngừng bán độ mới đó</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-600 block">✨ Mới Full box</label>
+                            <input id="editPriceFull" type="number" placeholder="0 = Ẩn" class="w-full rounded-xl border border-sakura-200 px-2.5 py-2 bg-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-600 block">💎 >98%</label>
+                            <input id="editPrice98" type="number" placeholder="0 = Ẩn" class="w-full rounded-xl border border-sakura-200 px-2.5 py-2 bg-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-600 block">⭐ >95%</label>
+                            <input id="editPrice95" type="number" placeholder="0 = Ẩn" class="w-full rounded-xl border border-sakura-200 px-2.5 py-2 bg-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-600 block">📦 90%</label>
+                            <input id="editPrice90" type="number" placeholder="0 = Ẩn" class="w-full rounded-xl border border-sakura-200 px-2.5 py-2 bg-white">
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-1"><label class="font-bold">Hãng</label><input id="editProdBrand" type="text" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
-                <div class="space-y-1"><label class="font-bold">Giá bán</label><input id="editProdPrice" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
-                <div class="space-y-1">
-                    <label class="font-bold">Tình Trạng Sản Phẩm</label>
-                    <select id="editProdCondition" class="w-full rounded-xl border border-sakura-200 px-3 py-2 bg-white font-bold text-sakura-600">
-                        <option value="Mới Full box">✨ Mới Full box</option>
-                        <option value=">98%">💎 >98% (Như mới)</option>
-                        <option value=">95%">⭐ >95% (Đẹp)</option>
-                        <option value="90%">📦 90% (Khá)</option>
-                    </select>
-                </div>
                 <div class="space-y-1"><label class="font-bold">Tồn kho</label><input id="editProdStock" type="number" class="w-full rounded-xl border border-sakura-200 px-3 py-2"></div>
                 <div class="space-y-1"><label class="font-bold">Danh Mục</label>
                     <select id="editProdCat" class="w-full rounded-xl border border-sakura-200 px-3 py-2">
@@ -584,7 +622,7 @@
                         <option value="Gundam Mecha">Gundam Mecha</option>
                     </select>
                 </div>
-                <div class="space-y-1 sm:col-span-2"><label class="font-bold text-sakura-600">Vị trí hiển thị</label>
+                <div class="space-y-1"><label class="font-bold text-sakura-600">Vị trí hiển thị</label>
                     <select id="editProdLocation" class="w-full rounded-xl border border-sakura-300 px-3 py-2 bg-sakura-50 font-bold">
                         <option value="catalog">Tủ Kệ Mô Hình (Thường)</option>
                         <option value="flashsale">⚡ Flash Sale (Giờ Vàng)</option>
@@ -592,7 +630,7 @@
                 </div>
             </div>
             <div class="mt-5 flex gap-3">
-                <button onclick="saveEditedProduct()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-display font-bold shadow-sm">Lưu Thay Đổi</button>
+                <button onclick="saveEditedProduct()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-display font-bold shadow-sm">Lưu Thay Đổi & GitHub</button>
             </div>
         </div>
     </div>
@@ -600,9 +638,42 @@
     <div id="toastContainer" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4"></div>
 
     <script>
+        const CONDITION_TIERS = ["Mới Full box", ">98%", ">95%", "90%"];
+
         const defaultProducts = [
-            { id: 1, name: "Bún Cá Miku Spring Festival", category: "Scale Figure", brand: "Good Smile Company", price: 3450000, oldPrice: 4200000, scale: "Tỷ lệ 1/7", height: "25.5 cm", condition: "Mới Full box", rating: 4.9, isFlashSale: true, stockLeft: 6, image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" },
-            { id: 2, name: "Gojo Satoru Nendoroid", category: "Nendoroid Chibi", brand: "Good Smile", price: 1850000, oldPrice: 2200000, scale: "Chibi", height: "10 cm", condition: ">98%", rating: 5.0, isFlashSale: false, stockLeft: 8, image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" }
+            {
+                id: 1,
+                name: "Bún Cá Miku Spring Festival",
+                category: "Scale Figure",
+                brand: "Good Smile Company",
+                price: 3450000,
+                condition: "Mới Full box",
+                conditionPrices: {
+                    "Mới Full box": 3450000,
+                    ">98%": 3150000,
+                    ">95%": 2890000,
+                    "90%": 2500000
+                },
+                isFlashSale: true,
+                stockLeft: 6,
+                image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 2,
+                name: "Gojo Satoru Nendoroid",
+                category: "Nendoroid Chibi",
+                brand: "Good Smile",
+                price: 1850000,
+                condition: "Mới Full box",
+                conditionPrices: {
+                    "Mới Full box": 1850000,
+                    ">98%": 1650000,
+                    ">95%": 1450000
+                },
+                isFlashSale: false,
+                stockLeft: 8,
+                image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
+            }
         ];
 
         const defaultSiteConfig = {
@@ -629,65 +700,136 @@
         let cart = [], orders = [], users = [];
         let currentUser = null;
         let currentCategory = 'all';
-        let db, auth, appId = 'buncá-shop-default';
+        let selectedConditions = {}; // Lưu độ mới khách đang chọn trên từng thẻ sản phẩm
 
         let currentOTP = null;
         let resetTargetUser = null;
 
+        let ghConfig = {
+            owner: localStorage.getItem('gh_owner') || '',
+            repo: localStorage.getItem('gh_repo') || '',
+            branch: localStorage.getItem('gh_branch') || 'main',
+            token: localStorage.getItem('gh_token') || '',
+            path: 'config.json'
+        };
+
+        // Trả về danh sách các mức giá theo độ mới của 1 sản phẩm (tương thích cả dữ liệu cũ)
+        function getProductConditions(p) {
+            const list = [];
+            if (p.conditionPrices && typeof p.conditionPrices === 'object') {
+                CONDITION_TIERS.forEach(tier => {
+                    const val = Number(p.conditionPrices[tier]);
+                    if (val > 0) list.push({ label: tier, price: val });
+                });
+            }
+            if (list.length === 0) {
+                list.push({ label: p.condition || "Mới Full box", price: Number(p.price) || 0 });
+            }
+            return list;
+        }
+
+        function initGitHubSettingsUI() {
+            document.getElementById('ghOwnerInput').value = ghConfig.owner;
+            document.getElementById('ghRepoInput').value = ghConfig.repo;
+            document.getElementById('ghBranchInput').value = ghConfig.branch;
+            document.getElementById('ghTokenInput').value = ghConfig.token;
+        }
+
+        function saveGitHubSettings() {
+            ghConfig.owner = document.getElementById('ghOwnerInput').value.trim();
+            ghConfig.repo = document.getElementById('ghRepoInput').value.trim();
+            ghConfig.branch = document.getElementById('ghBranchInput').value.trim() || 'main';
+            ghConfig.token = document.getElementById('ghTokenInput').value.trim();
+
+            localStorage.setItem('gh_owner', ghConfig.owner);
+            localStorage.setItem('gh_repo', ghConfig.repo);
+            localStorage.setItem('gh_branch', ghConfig.branch);
+            localStorage.setItem('gh_token', ghConfig.token);
+
+            showToast("Đã lưu cấu hình kết nối GitHub!");
+        }
+
         async function initCloudDatabase() {
-            if (typeof window.firebaseModules === 'undefined') { setTimeout(initCloudDatabase, 200); return; }
-            const { initializeApp, getAuth, signInAnonymously, getFirestore } = window.firebaseModules;
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
-            
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            try {
-                await signInAnonymously(auth);
-                await loadCloudData();
-            } catch (err) { console.log("Offline mode", err); applySiteConfig(); renderProducts(); renderFlashSale(); }
+            await loadCloudData();
         }
 
         async function loadCloudData() {
-            if (!db) return;
             try {
-                const storeRef = window.firebaseModules.doc(db, 'artifacts', appId, 'public', 'data', 'store_state');
-                const snap = await window.firebaseModules.getDoc(storeRef);
-                if (snap.exists()) {
-                    const data = snap.data();
+                const res = await fetch(`./config.json?v=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
                     if (data.products) products = data.products;
+                    if (data.siteConfig) siteConfig = data.siteConfig;
                     if (data.orders) orders = data.orders;
                     if (data.users) users = data.users;
-                    if (data.siteConfig) siteConfig = data.siteConfig;
                 }
-            } catch (e) { }
+            } catch (e) {
+                console.log("Chưa có config.json hoặc đang xem offline.", e);
+            }
             applySiteConfig();
             renderFlashSale();
             renderProducts();
         }
 
         async function saveCloudData() {
-            if (!db) return;
+            if (!ghConfig.owner || !ghConfig.repo || !ghConfig.token) {
+                switchAdminTab('github');
+                showToast("⚠️ Vui lòng cấu hình Token, User và Repo GitHub ở tab 'Kết Nối GitHub' trước!");
+                return;
+            }
+
+            const apiUrl = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${ghConfig.path}`;
+            showToast("Đang đồng bộ dữ liệu lên GitHub... ⏳");
+
             try {
-                const storeRef = window.firebaseModules.doc(db, 'artifacts', appId, 'public', 'data', 'store_state');
-                await window.firebaseModules.setDoc(storeRef, { products, orders, users, siteConfig });
-            } catch (e) { }
+                const getRes = await fetch(`${apiUrl}?ref=${ghConfig.branch}`, {
+                    headers: {
+                        "Authorization": `Bearer ${ghConfig.token}`,
+                        "Accept": "application/vnd.github.v3+json"
+                    }
+                });
+
+                let sha = "";
+                if (getRes.ok) {
+                    const fileInfo = await getRes.json();
+                    sha = fileInfo.sha;
+                } else if (getRes.status === 401 || getRes.status === 403) {
+                    showToast("Token GitHub không hợp lệ hoặc đã hết hạn!");
+                    return;
+                }
+
+                const payload = { siteConfig, products, orders, users };
+                const jsonStr = JSON.stringify(payload, null, 2);
+                const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+                const putRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${ghConfig.token}`,
+                        "Accept": "application/vnd.github.v3+json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: "Admin update website configuration & condition prices",
+                        content: base64Content,
+                        sha: sha || undefined,
+                        branch: ghConfig.branch
+                    })
+                });
+
+                if (putRes.ok) {
+                    showToast("Đã lưu trực tiếp vào config.json trên GitHub! 🌸");
+                } else {
+                    const err = await putRes.json();
+                    showToast("Lỗi lưu GitHub: " + (err.message || "Không xác định"));
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Lỗi kết nối tới GitHub API!");
+            }
         }
 
         function formatVND(num) { return Number(num || 0).toLocaleString('vi-VN') + ' ₫'; }
-        
-        function processImageUpload(event, inputId, previewId) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Str = e.target.result;
-                document.getElementById(inputId).value = base64Str;
-                document.getElementById(previewId).src = base64Str;
-                showToast('Đã tải ảnh lên thành công! 🌸');
-            };
-            reader.readAsDataURL(file);
-        }
 
         function applySiteConfig() {
             if(document.getElementById('pageTitleTag')) document.title = siteConfig.pageTitle || defaultSiteConfig.pageTitle;
@@ -731,9 +873,8 @@
                 footerText: document.getElementById('cfgFooterText').value.trim() || defaultSiteConfig.footerText,
                 footerSubText: document.getElementById('cfgFooterSubText').value.trim() || defaultSiteConfig.footerSubText
             };
-            await saveCloudData();
             applySiteConfig();
-            showToast('Đã lưu toàn bộ cấu hình trang web thành công! 🌸');
+            await saveCloudData();
         }
 
         /* --- AUTH & OTP --- */
@@ -768,28 +909,6 @@
             if (!found) { showToast('Sai tên đăng nhập, SĐT/Email hoặc mật khẩu!'); return; }
             currentUser = { username: found.username, role: 'customer' };
             updateHeaderAccountUI(); toggleAuthModal(false); showToast(`Chào mừng ${found.username}!`);
-        }
-
-        async function loginWithGoogle() {
-            try {
-                const provider = new window.firebaseModules.GoogleAuthProvider();
-                const result = await window.firebaseModules.signInWithPopup(auth, provider);
-                const user = result.user;
-                if(!users.find(u => u.email === user.email)) {
-                    users.push({ username: user.displayName || 'GoogleUser', email: user.email, password: 'google_oauth_no_pass' });
-                    await saveCloudData();
-                }
-                currentUser = { username: user.displayName || 'Khách Google', role: 'customer' };
-                updateHeaderAccountUI(); toggleAuthModal(false); showToast(`Đăng nhập Google thành công!`);
-            } catch (error) {
-                const mockName = "Khách Hàng (Google Demo)";
-                if(!users.find(u => u.username === mockName)) {
-                    users.push({ username: mockName, email: "demo@gmail.com", password: '123' });
-                    saveCloudData();
-                }
-                currentUser = { username: mockName, role: 'customer' };
-                updateHeaderAccountUI(); toggleAuthModal(false); showToast(`[Demo] Đăng nhập Google giả lập thành công!`);
-            }
         }
 
         async function handleRegisterSubmit(e) {
@@ -841,16 +960,18 @@
         function toggleAdminModal(open) {
             if (open && (!currentUser || currentUser.role !== 'admin')) { toggleAuthModal(true); return; }
             const modal = document.getElementById('adminModal');
-            if (open) { renderAdminDashboard(); modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            if (open) { initGitHubSettingsUI(); renderAdminDashboard(); modal.classList.remove('hidden'); modal.classList.add('flex'); }
             else { modal.classList.remove('flex'); modal.classList.add('hidden'); }
         }
 
         function switchAdminTab(tab) {
-            ['products', 'users', 'settings', 'orders'].forEach(t => {
+            ['products', 'users', 'settings', 'github', 'orders'].forEach(t => {
                 document.getElementById(`adminTab-${t}`).classList.toggle('hidden', t !== tab);
                 const btn = document.getElementById(`tabBtn-${t}`);
-                if (t === tab) btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-sakura-500 text-white whitespace-nowrap";
-                else btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap";
+                if (btn) {
+                    if (t === tab) btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-sakura-500 text-white whitespace-nowrap";
+                    else btn.className = "px-4 py-1.5 rounded-full font-display font-bold text-xs bg-white border border-sakura-200 text-sakura-text whitespace-nowrap";
+                }
             });
         }
 
@@ -858,24 +979,27 @@
             document.getElementById('adminCountProds').textContent = products.length;
             document.getElementById('adminCountOrders').textContent = orders.length;
 
-            document.getElementById('adminProductRows').innerHTML = products.map(p => `
+            document.getElementById('adminProductRows').innerHTML = products.map(p => {
+                const condList = getProductConditions(p);
+                const condBadgesHtml = condList.map(c =>
+                    `<span class="inline-block text-[10px] bg-sakura-50 border border-sakura-200 text-sakura-600 px-2 py-0.5 rounded-md font-bold mr-1 mb-1">${c.label}: ${formatVND(c.price)}</span>`
+                ).join('');
+
+                return `
                 <tr class="hover:bg-sakura-50/40">
                     <td class="p-3 flex items-center gap-2.5">
                         <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover border border-sakura-200">
-                        <span class="font-bold text-sakura-text line-clamp-1 max-w-[150px]">${p.name}</span>
+                        <span class="font-bold text-sakura-text line-clamp-1 max-w-[160px]">${p.name}</span>
                     </td>
-                    <td class="p-3 text-slate-500">
-                        ${p.category}<br/>
-                        <span class="text-[10px] bg-sakura-100 text-sakura-600 px-1.5 py-0.5 rounded font-bold">${p.condition || 'Mới Full box'}</span>
-                    </td>
-                    <td class="p-3 font-bold text-sakura-600">${formatVND(p.price)}</td>
+                    <td class="p-3 text-slate-500 font-semibold">${p.category}</td>
+                    <td class="p-3">${condBadgesHtml}</td>
                     <td class="p-3 text-center">${p.stockLeft || 0}</td>
-                    <td class="p-3 text-right space-x-1">
+                    <td class="p-3 text-right space-x-1 whitespace-nowrap">
                         <button onclick="openEditProductAdmin(${p.id})" class="px-3 py-1 rounded-lg bg-sky-100 text-sky-600 font-bold">Sửa</button>
                         <button onclick="deleteProductAdmin(${p.id})" class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-600 font-bold"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
 
             document.getElementById('adminUserRows').innerHTML = users.map(u => `
                 <tr class="hover:bg-sakura-50/40">
@@ -909,8 +1033,11 @@
 
             document.getElementById('adminOrdersList').innerHTML = orders.length ? orders.map((o, idx) => `
                 <div class="p-4 rounded-2xl bg-sakura-50/50 border border-sakura-200 text-xs flex justify-between">
-                    <div><b>${o.orderId}</b> - KH: ${o.customerName} (${o.phone})<br/>Sp: ${o.items.map(i => i.name).join(', ')}</div>
-                    <div class="text-right"><span class="font-bold text-sakura-600">${formatVND(o.total)}</span><br/><button onclick="orders.splice(${idx},1); renderAdminDashboard();" class="text-rose-500 underline">Xóa</button></div>
+                    <div>
+                        <b>${o.orderId}</b> - KH: ${o.customerName} (${o.phone})<br/>
+                        Sp: ${o.items.map(i => `${i.name} [${i.selectedCondition || i.condition || 'Mới Full box'}] x${i.quantity}`).join(', ')}
+                    </div>
+                    <div class="text-right"><span class="font-bold text-sakura-600">${formatVND(o.total)}</span><br/><button onclick="orders.splice(${idx},1); saveCloudData(); renderAdminDashboard();" class="text-rose-500 underline">Xóa</button></div>
                 </div>
             `).join('') : '<div class="text-center py-5 text-slate-400">Trống</div>';
         }
@@ -918,19 +1045,43 @@
         async function addNewProductAdmin() {
             const name = document.getElementById('newProdName').value.trim();
             const brand = document.getElementById('newProdBrand').value.trim() || 'Hãng khác';
-            const price = parseInt(document.getElementById('newProdPrice').value, 10) || 1000000;
-            const condition = document.getElementById('newProdCondition').value;
             const img = document.getElementById('newProdImage').value.trim() || 'https://placehold.co/600x600/ffe8f0/ff528a?text=FIGURE';
             const cat = document.getElementById('newProdCat').value;
             const isFlash = document.getElementById('newProdLocation').value === 'flashsale';
 
+            const conditionPrices = {};
+            const pFull = parseInt(document.getElementById('newPriceFull').value, 10);
+            const p98 = parseInt(document.getElementById('newPrice98').value, 10);
+            const p95 = parseInt(document.getElementById('newPrice95').value, 10);
+            const p90 = parseInt(document.getElementById('newPrice90').value, 10);
+
+            if (pFull > 0) conditionPrices["Mới Full box"] = pFull;
+            if (p98 > 0) conditionPrices[">98%"] = p98;
+            if (p95 > 0) conditionPrices[">95%"] = p95;
+            if (p90 > 0) conditionPrices["90%"] = p90;
+
+            const availableKeys = Object.keys(conditionPrices);
             if (!name) { showToast('Vui lòng nhập tên mô hình!'); return; }
+            if (availableKeys.length === 0) { showToast('Vui lòng nhập giá cho ít nhất 1 phân loại độ mới!'); return; }
+
+            const defaultCond = availableKeys[0];
+            const defaultPrice = conditionPrices[defaultCond];
+
             products.unshift({
-                id: Date.now(), name, brand, category: cat, price, oldPrice: Math.round(price * 1.2), condition,
-                badge: "Mới Về", isFlashSale: isFlash, stockLeft: 10, image: img, rating: 5.0
+                id: Date.now(),
+                name,
+                brand,
+                category: cat,
+                price: defaultPrice,
+                condition: defaultCond,
+                conditionPrices,
+                isFlashSale: isFlash,
+                stockLeft: 10,
+                image: img
             });
-            await saveCloudData(); renderFlashSale(); renderProducts(); renderAdminDashboard();
-            showToast('Đã thêm sản phẩm mới!');
+
+            renderFlashSale(); renderProducts(); renderAdminDashboard();
+            await saveCloudData();
         }
 
         function openEditProductAdmin(id) {
@@ -939,13 +1090,18 @@
             document.getElementById('editProdId').value = p.id;
             document.getElementById('editProdName').value = p.name;
             document.getElementById('editProdBrand').value = p.brand;
-            document.getElementById('editProdPrice').value = p.price;
-            document.getElementById('editProdCondition').value = p.condition || 'Mới Full box';
             document.getElementById('editProdImage').value = p.image;
             document.getElementById('editProdImgPreview').src = p.image;
             document.getElementById('editProdStock').value = p.stockLeft || 0;
             document.getElementById('editProdCat').value = p.category;
             document.getElementById('editProdLocation').value = p.isFlashSale ? 'flashsale' : 'catalog';
+
+            // Điền bảng giá theo độ mới
+            const cp = p.conditionPrices || { [p.condition || "Mới Full box"]: p.price };
+            document.getElementById('editPriceFull').value = cp["Mới Full box"] || '';
+            document.getElementById('editPrice98').value = cp[">98%"] || '';
+            document.getElementById('editPrice95').value = cp[">95%"] || '';
+            document.getElementById('editPrice90').value = cp["90%"] || '';
             
             document.getElementById('editProductModal').classList.remove('hidden');
             document.getElementById('editProductModal').classList.add('flex');
@@ -960,59 +1116,228 @@
             const id = parseInt(document.getElementById('editProdId').value);
             const p = products.find(x => x.id === id);
             if(!p) return;
+
+            const conditionPrices = {};
+            const pFull = parseInt(document.getElementById('editPriceFull').value, 10);
+            const p98 = parseInt(document.getElementById('editPrice98').value, 10);
+            const p95 = parseInt(document.getElementById('editPrice95').value, 10);
+            const p90 = parseInt(document.getElementById('editPrice90').value, 10);
+
+            if (pFull > 0) conditionPrices["Mới Full box"] = pFull;
+            if (p98 > 0) conditionPrices[">98%"] = p98;
+            if (p95 > 0) conditionPrices[">95%"] = p95;
+            if (p90 > 0) conditionPrices["90%"] = p90;
+
+            const availableKeys = Object.keys(conditionPrices);
+            if (availableKeys.length === 0) {
+                showToast('Phải có ít nhất 1 mức giá độ mới lớn hơn 0!');
+                return;
+            }
+
             p.name = document.getElementById('editProdName').value;
             p.brand = document.getElementById('editProdBrand').value;
-            p.price = parseInt(document.getElementById('editProdPrice').value) || p.price;
-            p.condition = document.getElementById('editProdCondition').value;
+            p.conditionPrices = conditionPrices;
+            p.condition = availableKeys[0];
+            p.price = conditionPrices[availableKeys[0]];
             p.image = document.getElementById('editProdImage').value;
             p.stockLeft = parseInt(document.getElementById('editProdStock').value) || 0;
             p.category = document.getElementById('editProdCat').value;
             p.isFlashSale = document.getElementById('editProdLocation').value === 'flashsale';
 
-            await saveCloudData();
             closeEditProductAdmin(); renderFlashSale(); renderProducts(); renderAdminDashboard();
-            showToast('Lưu chỉnh sửa thành công!');
+            await saveCloudData();
         }
 
-        async function deleteProductAdmin(id) { products = products.filter(p => p.id !== id); await saveCloudData(); renderAdminDashboard(); renderFlashSale(); renderProducts(); showToast('Đã xóa.'); }
+        async function deleteProductAdmin(id) { 
+            products = products.filter(p => p.id !== id); 
+            renderAdminDashboard(); renderFlashSale(); renderProducts(); 
+            await saveCloudData(); 
+        }
 
-        /* --- SHOP RENDER & CART --- */
+        /* --- CHỌN ĐỘ MỚI & CẬP NHẬT GIÁ TRÊN THẺ SẢN PHẨM --- */
+        function selectCardCondition(prefix, prodId, condLabel) {
+            const p = products.find(x => x.id === prodId);
+            if (!p) return;
+            const conds = getProductConditions(p);
+            const found = conds.find(c => c.label === condLabel) || conds[0];
+
+            selectedConditions[`${prefix}_${prodId}`] = found;
+
+            // Cập nhật giá & badge trên giao diện thẻ
+            const priceEl = document.getElementById(`price-${prefix}-${prodId}`);
+            const badgeEl = document.getElementById(`badge-${prefix}-${prodId}`);
+            if (priceEl) priceEl.textContent = formatVND(found.price);
+            if (badgeEl) badgeEl.textContent = found.label;
+
+            // Đổi màu nút độ mới đang được chọn
+            const btnContainer = document.getElementById(`cond-btns-${prefix}-${prodId}`);
+            if (btnContainer) {
+                Array.from(btnContainer.children).forEach(btn => {
+                    if (btn.getAttribute('data-cond') === found.label) {
+                        btn.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-sakura-500 text-white shadow-sm transition-all";
+                    } else {
+                        btn.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-sakura-50 text-sakura-text border border-sakura-200 hover:bg-sakura-100 transition-all";
+                    }
+                });
+            }
+        }
+
+        function buildProductCardHTML(p, prefix) {
+            const conds = getProductConditions(p);
+            const currentSelected = selectedConditions[`${prefix}_${p.id}`] || conds[0];
+            selectedConditions[`${prefix}_${p.id}`] = currentSelected;
+
+            const condButtonsHTML = conds.map(c => {
+                const isActive = c.label === currentSelected.label;
+                const btnClass = isActive
+                    ? "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-sakura-500 text-white shadow-sm transition-all"
+                    : "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-sakura-50 text-sakura-text border border-sakura-200 hover:bg-sakura-100 transition-all";
+                return `<button type="button" data-cond="${c.label}" onclick="selectCardCondition('${prefix}', ${p.id}, '${c.label}')" class="${btnClass}">${c.label}</button>`;
+            }).join('');
+
+            const imgHeight = prefix === 'flash' ? 'h-48' : 'h-56';
+            const btnStyle = prefix === 'flash'
+                ? 'bg-gradient-to-r from-sakura-400 to-sakura-500 text-white shadow-sm'
+                : 'bg-sakura-50 text-sakura-600 border border-sakura-200 hover:bg-sakura-100';
+
+            return `
+                <div class="tilt-card rounded-[2rem] bg-white border-2 border-sakura-200 p-4 flex flex-col justify-between">
+                    <div class="tilt-content space-y-2.5 relative">
+                        <span id="badge-${prefix}-${p.id}" class="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-sakura-600 text-[10px] font-bold shadow-sm border border-sakura-100">${currentSelected.label}</span>
+                        <img src="${p.image}" class="w-full ${imgHeight} object-cover rounded-2xl cursor-pointer">
+                        <div class="text-[10px] font-bold uppercase text-slate-400">${p.brand || 'Good Smile'}</div>
+                        <h3 class="font-bold text-sakura-text line-clamp-1">${p.name}</h3>
+                        
+                        <div class="space-y-1 pt-1">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Chọn độ mới:</span>
+                            <div id="cond-btns-${prefix}-${p.id}" class="flex flex-wrap gap-1.5">
+                                ${condButtonsHTML}
+                            </div>
+                        </div>
+
+                        <div id="price-${prefix}-${p.id}" class="font-display font-bold text-sakura-600 text-lg pt-1">${formatVND(currentSelected.price)}</div>
+                    </div>
+                    <button onclick="addToCart(${p.id}, '${prefix}')" class="mt-4 py-2.5 rounded-full font-bold text-xs transition-colors ${btnStyle}">Thêm Vào Giỏ</button>
+                </div>
+            `;
+        }
+
         function renderFlashSale() {
             const container = document.getElementById('flashSaleContainer');
             const items = products.filter(p => p.isFlashSale);
-            container.innerHTML = items.length ? items.map(p => `
-                <div class="tilt-card rounded-[1.8rem] bg-white border-2 border-sakura-200 p-4 flex flex-col justify-between">
-                    <div class="tilt-content space-y-3 relative">
-                        <span class="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-sakura-600 text-[10px] font-bold shadow-sm">${p.condition || 'Mới Full box'}</span>
-                        <img src="${p.image}" class="w-full h-48 object-cover rounded-2xl cursor-pointer">
-                        <h3 class="font-bold text-sakura-text line-clamp-1">${p.name}</h3>
-                        <div class="font-bold text-sakura-600 text-lg">${formatVND(p.price)}</div>
-                    </div>
-                    <button onclick="addToCart(${p.id})" class="mt-4 py-2.5 rounded-full bg-gradient-to-r from-sakura-400 to-sakura-500 text-white font-bold text-xs">Thêm Giỏ Hàng</button>
-                </div>`).join('') : '<div class="col-span-3 text-center py-8 text-slate-400">Không có deal Flash Sale.</div>';
+            container.innerHTML = items.length
+                ? items.map(p => buildProductCardHTML(p, 'flash')).join('')
+                : '<div class="col-span-3 text-center py-8 text-slate-400">Không có deal Flash Sale.</div>';
         }
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             document.getElementById('count-all').textContent = products.length;
-            let filtered = products.filter(p => (currentCategory === 'all' || p.category === currentCategory));
-            grid.innerHTML = filtered.length ? filtered.map(p => `
-                <div class="tilt-card rounded-[2rem] bg-white border-2 border-sakura-200 p-4 flex flex-col justify-between">
-                    <div class="tilt-content space-y-3 relative">
-                        <span class="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-sakura-600 text-[10px] font-bold shadow-sm">${p.condition || 'Mới Full box'}</span>
-                        <img src="${p.image}" class="w-full h-56 object-cover rounded-2xl cursor-pointer">
-                        <h3 class="font-bold text-sakura-text line-clamp-1">${p.name}</h3>
-                        <div class="font-bold text-sakura-600 text-lg">${formatVND(p.price)}</div>
-                    </div>
-                    <button onclick="addToCart(${p.id})" class="mt-4 py-2.5 rounded-full bg-sakura-50 text-sakura-600 border border-sakura-200 font-bold text-xs hover:bg-sakura-100">Thêm Vào Giỏ</button>
-                </div>`).join('') : '<div class="col-span-4 text-center py-10 text-slate-500">Trống</div>';
+            const keyword = (document.getElementById('headerSearchInput')?.value || '').toLowerCase().trim();
+            const sortVal = document.getElementById('sortSelect')?.value || 'featured';
+
+            let filtered = products.filter(p => {
+                const matchCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchSearch = !keyword || p.name.toLowerCase().includes(keyword) || (p.brand && p.brand.toLowerCase().includes(keyword));
+                return matchCat && matchSearch;
+            });
+
+            if (sortVal === 'price-asc') filtered.sort((a, b) => getProductConditions(a)[0].price - getProductConditions(b)[0].price);
+            if (sortVal === 'price-desc') filtered.sort((a, b) => getProductConditions(b)[0].price - getProductConditions(a)[0].price);
+
+            grid.innerHTML = filtered.length
+                ? filtered.map(p => buildProductCardHTML(p, 'cat')).join('')
+                : '<div class="col-span-4 text-center py-10 text-slate-500">Không tìm thấy mô hình phù hợp</div>';
         }
 
-        function setCategory(cat) { currentCategory = cat; renderProducts(); }
-        function toggleCart(open) { const c = document.getElementById('cartDrawer'), o = document.getElementById('cartOverlay'); if(open) { updateCartUI(); c.classList.remove('hidden'); c.classList.add('flex'); o.classList.remove('hidden'); } else { c.classList.add('hidden'); c.classList.remove('flex'); o.classList.add('hidden'); } }
-        function addToCart(id) { if(!currentUser){ toggleAuthModal(true); return; } const p = products.find(x => x.id === id); const ex = cart.find(x => x.id === id); if(ex) ex.quantity++; else cart.push({...p, quantity: 1}); showToast('Đã thêm!'); updateCartUI(); }
-        function updateCartUI() { document.getElementById('cartCountBadge').textContent = cart.reduce((s, i) => s + i.quantity, 0); document.getElementById('cartTotalPrice').textContent = formatVND(cart.reduce((s, i) => s + i.price * i.quantity, 0)); document.getElementById('cartUserStatus').textContent = currentUser ? currentUser.username : 'Chưa đăng nhập'; document.getElementById('cartLoginNotice').classList.toggle('hidden', !!currentUser); document.getElementById('cartCheckoutForm').classList.toggle('hidden', !currentUser); }
-        async function checkoutOrder() { if(cart.length===0) return; orders.unshift({ orderId: '#SKR-'+Math.floor(10000+Math.random()*90000), customerName: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, total: cart.reduce((s, i) => s + i.price * i.quantity, 0), items: [...cart] }); cart = []; await saveCloudData(); toggleCart(false); showToast('Đặt hàng thành công!'); }
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('currentCategoryLabel').textContent = cat === 'all' ? 'Tất Cả Sản Phẩm' : cat;
+            renderProducts();
+        }
+
+        /* --- GIỎ HÀNG THEO ĐỘ MỚI --- */
+        function toggleCart(open) {
+            const c = document.getElementById('cartDrawer'), o = document.getElementById('cartOverlay');
+            if(open) { updateCartUI(); c.classList.remove('hidden'); c.classList.add('flex'); o.classList.remove('hidden'); }
+            else { c.classList.add('hidden'); c.classList.remove('flex'); o.classList.add('hidden'); }
+        }
+
+        function addToCart(id, prefix = 'cat') {
+            if(!currentUser){ toggleAuthModal(true); return; }
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+
+            const chosen = selectedConditions[`${prefix}_${id}`] || getProductConditions(p)[0];
+            const cartKey = `${id}_${chosen.label}`;
+
+            const ex = cart.find(x => x.cartKey === cartKey);
+            if (ex) {
+                ex.quantity++;
+            } else {
+                cart.push({
+                    ...p,
+                    cartKey,
+                    selectedCondition: chosen.label,
+                    price: chosen.price,
+                    quantity: 1
+                });
+            }
+            showToast(`Đã thêm ${p.name} (${chosen.label}) vào giỏ!`);
+            updateCartUI();
+        }
+
+        function removeFromCart(cartKey) {
+            cart = cart.filter(x => x.cartKey !== cartKey);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartCountBadge').textContent = cart.reduce((s, i) => s + i.quantity, 0);
+            document.getElementById('cartTotalPrice').textContent = formatVND(cart.reduce((s, i) => s + i.price * i.quantity, 0));
+            document.getElementById('cartUserStatus').textContent = currentUser ? currentUser.username : 'Chưa đăng nhập';
+            document.getElementById('cartLoginNotice').classList.toggle('hidden', !!currentUser);
+            document.getElementById('cartCheckoutForm').classList.toggle('hidden', !currentUser);
+
+            const listEl = document.getElementById('cartItemsList');
+            if (!listEl) return;
+            listEl.innerHTML = cart.length ? cart.map(item => `
+                <div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-sakura-50/60 border border-sakura-200 text-xs">
+                    <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover border border-sakura-200 shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-sakura-text truncate">${item.name}</div>
+                        <div class="text-[11px] text-sakura-600 font-bold">Độ mới: ${item.selectedCondition}</div>
+                        <div class="text-slate-600 font-semibold">${formatVND(item.price)} x ${item.quantity}</div>
+                    </div>
+                    <button onclick="removeFromCart('${item.cartKey}')" class="w-7 h-7 rounded-full bg-white text-rose-500 border border-rose-200 hover:bg-rose-500 hover:text-white flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                    </button>
+                </div>
+            `).join('') : '<div class="text-center py-8 text-slate-400 text-xs">Giỏ hàng của bạn đang trống</div>';
+        }
+
+        async function checkoutOrder() {
+            if(cart.length === 0) return;
+            const custName = document.getElementById('custName').value.trim();
+            const custPhone = document.getElementById('custPhone').value.trim();
+            if (!custName || !custPhone) {
+                showToast('Vui lòng nhập họ tên và số điện thoại nhận hàng!');
+                return;
+            }
+            orders.unshift({
+                orderId: '#BC-' + Math.floor(10000 + Math.random() * 90000),
+                customerName: custName,
+                phone: custPhone,
+                address: document.getElementById('custAddress').value.trim(),
+                total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
+                items: [...cart]
+            });
+            cart = [];
+            updateCartUI();
+            toggleCart(false);
+            showToast('Đặt hàng thành công!');
+            await saveCloudData();
+        }
         
         function showToast(msg) { const c = document.getElementById('toastContainer'), t = document.createElement('div'); t.className = "flex items-center gap-2.5 p-3.5 rounded-2xl bg-white border-2 border-sakura-300 text-sakura-text text-xs shadow-lg"; t.innerHTML = `<i class="fa-solid fa-heart text-sakura-500"></i><span class="font-bold">${msg}</span>`; c.appendChild(t); setTimeout(() => t.remove(), 3500); }
 
