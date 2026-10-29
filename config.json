@@ -19,6 +19,22 @@
   },
   "products": [
     {
+      "id": 1793280394219,
+      "name": "hùng chít chít",
+      "brand": "con cặc",
+      "category": "Scale Figure",
+      "price": 1000,
+      "condition": "Mới Full box",
+      "conditionPrices": {
+        "Mới Full box": 1000,
+        ">98%": 690,
+        ">95%": 69
+      },
+      "isFlashSale": true,
+      "stockLeft": 10,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTykqUkp5nShRhC9X0W2cire-QXpVc8Y4Zbc9WNcta4qg&s=10"
+    },
+    {
       "id": 1793206840849,
       "name": "chim",
       "brand": "ducanh",
