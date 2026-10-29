@@ -19,38 +19,6 @@
   },
   "products": [
     {
-      "id": 1793280394219,
-      "name": "hùng chít chít",
-      "brand": "con cặc",
-      "category": "Scale Figure",
-      "price": 690,
-      "condition": ">98%",
-      "conditionPrices": {
-        ">98%": 690,
-        ">95%": 69
-      },
-      "isFlashSale": true,
-      "stockLeft": 10,
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTykqUkp5nShRhC9X0W2cire-QXpVc8Y4Zbc9WNcta4qg&s=10"
-    },
-    {
-      "id": 1793206840849,
-      "name": "chim",
-      "brand": "ducanh",
-      "category": "Scale Figure",
-      "price": 2000000,
-      "condition": "Mới Full box",
-      "conditionPrices": {
-        "Mới Full box": 2000000,
-        ">98%": 550000,
-        ">95%": 200000,
-        "90%": 100000
-      },
-      "isFlashSale": true,
-      "stockLeft": 12,
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVYmDLq0yxYn7-VOvA9hYFVR8i0RgFwTRbl80eRGxIag&s=10"
-    },
-    {
       "id": 1,
       "name": "Bún Cá Miku Spring Festival",
       "category": "Scale Figure",
