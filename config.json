@@ -27,12 +27,12 @@
       "condition": "Mới Full box",
       "conditionPrices": {
         "Mới Full box": 2000000,
-        ">98%": 321111,
-        ">95%": 111111111,
-        "90%": 111111
+        ">98%": 550000,
+        ">95%": 200000,
+        "90%": 100000
       },
-      "isFlashSale": false,
-      "stockLeft": 10,
+      "isFlashSale": true,
+      "stockLeft": 12,
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVYmDLq0yxYn7-VOvA9hYFVR8i0RgFwTRbl80eRGxIag&s=10"
     },
     {
